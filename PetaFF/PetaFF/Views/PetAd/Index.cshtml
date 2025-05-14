@@ -1,0 +1,27 @@
+@model IEnumerable<PetaFF.Models.PetAd>
+@{
+    ViewData["Title"] = "Объявления о пропавших животных";
+}
+<h2>@ViewData["Title"]</h2>
+<a class="btn btn-primary mb-3" asp-action="Create">Добавить объявление</a>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Кличка</th>
+            <th>Вид</th>
+            <th>Место пропажи</th>
+            <th>Контакт</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var ad in Model)
+    {
+        <tr>
+            <td>@ad.Name</td>
+            <td>@ad.Type</td>
+            <td>@ad.Location</td>
+            <td>@ad.ContactPhone</td>
+        </tr>
+    }
+    </tbody>
+</table> 

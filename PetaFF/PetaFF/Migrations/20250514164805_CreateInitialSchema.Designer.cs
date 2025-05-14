@@ -11,8 +11,8 @@ using PetaFF.Data;
 namespace PetaFF.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250514102357_AddPetAd")]
-    partial class AddPetAd
+    [Migration("20250514164805_CreateInitialSchema")]
+    partial class CreateInitialSchema
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,15 +40,15 @@ namespace PetaFF.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Location")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhotoPath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Street")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Type")

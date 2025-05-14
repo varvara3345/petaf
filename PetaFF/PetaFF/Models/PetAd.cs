@@ -22,7 +22,7 @@ namespace PetaFF.Models
 
         [Required]
         [Display(Name = "Район/место пропажи")]
-        public string Location { get; set; }
+        public string Street { get; set; }
 
         [Display(Name = "Контактный телефон")]
         public string ContactPhone { get; set; }

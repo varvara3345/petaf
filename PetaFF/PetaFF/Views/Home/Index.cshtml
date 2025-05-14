@@ -1,8 +1,62 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model IEnumerable<PetaFF.Models.PetAd>
+@using PetaFF.Extensions
+@{
+    ViewData["Title"] = "Главная";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container mt-4">
+    <div class="jumbotron">
+        <h1 class="display-4">Добро пожаловать в PetaFF!</h1>
+        <p class="lead">Платформа для поиска пропавших питомцев и помощи им.</p>
+        <hr class="my-4">
+        <p>Здесь вы можете разместить объявление о пропавшем питомце или помочь в поиске.</p>
+        <a class="btn btn-primary btn-lg" asp-controller="PetAd" asp-action="Create" role="button">Разместить объявление</a>
+    </div>
+
+    <h2 class="mt-5 mb-4">Последние объявления</h2>
+    <div class="row">
+        @foreach (var ad in Model.Take(4))
+        {
+            <div class="col-md-3 mb-4">
+                <div class="card h-100">
+                    @if (!string.IsNullOrEmpty(ad.PhotoPath))
+                    {
+                        <img src="@ad.PhotoPath" class="card-img-top" alt="Фото животного" style="height: 200px; object-fit: cover;">
+                    }
+                    <div class="card-body">
+                        <h5 class="card-title">@ad.Name</h5>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="badge bg-primary">@ad.Type</span>
+                            <span class="badge @(ad.Status switch {
+                                PetStatus.InSearch => "bg-danger",
+                                PetStatus.Found => "bg-success",
+                                PetStatus.TemporaryShelter => "bg-warning",
+                                PetStatus.InShelter => "bg-info",
+                                _ => "bg-secondary"
+                            })">@ad.Status.GetDisplayName()</span>
+                        </div>
+                        <p class="card-text">@(ad.Description.Length > 50 ? ad.Description.Substring(0, 50) + "..." : ad.Description)</p>
+                    </div>
+                    <div class="card-footer">
+                        <a asp-controller="PetAd" asp-action="Details" asp-route-id="@ad.Id" class="btn btn-primary btn-sm">Подробнее</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="text-center mt-4">
+        <a asp-controller="PetAd" asp-action="OtherAds" class="btn btn-outline-primary">Смотреть все объявления</a>
+    </div>
 </div>
+
+@section Scripts {
+    <script>
+        // Добавляем Font Awesome для иконок
+        if (!document.querySelector('link[href*="font-awesome"]')) {
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css';
+            document.head.appendChild(link);
+        }
+    </script>
+}

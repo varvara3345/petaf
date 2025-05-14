@@ -1,4 +1,7 @@
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PetaFF.Models
 {
@@ -7,26 +10,30 @@ namespace PetaFF.Models
         public int Id { get; set; }
 
         [Required]
-        [Display(Name = "Имя пользователя")]
+        [StringLength(50)]
         public string Username { get; set; }
 
         [Required]
         [EmailAddress]
-        [Display(Name = "Email")]
         public string Email { get; set; }
 
         [Required]
-        [Display(Name = "Пароль")]
-        [DataType(DataType.Password)]
+        [RegularExpression(@"^[a-zA-Z0-9]+$", ErrorMessage = "Пароль может содержать только английские буквы и цифры")]
+        [StringLength(50, MinimumLength = 6, ErrorMessage = "Пароль должен быть от 6 до 50 символов")]
         public string Password { get; set; }
 
-        [Display(Name = "Имя")]
+        [Required]
         public string FirstName { get; set; }
 
-        [Display(Name = "Фамилия")]
+        [Required]
         public string LastName { get; set; }
 
-        [Display(Name = "Телефон")]
+        [Required]
         public string PhoneNumber { get; set; }
+
+        // Навигационные свойства
+        public ICollection<PetAd> PetAds { get; set; }
+        public ICollection<Comment> Comments { get; set; }
+        public ICollection<Like> Likes { get; set; }
     }
 } 

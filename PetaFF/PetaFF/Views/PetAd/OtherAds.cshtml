@@ -2,14 +2,10 @@
 @using PetaFF.Extensions
 
 @{
-    ViewData["Title"] = "Мои объявления";
+    ViewData["Title"] = "Объявления других";
 }
 
-<h1>Мои объявления</h1>
-
-<p>
-    <a asp-action="Create" class="btn btn-primary">Создать новое объявление</a>
-</p>
+<h1>Объявления других пользователей</h1>
 
 <div class="row">
     @foreach (var item in Model)
@@ -36,12 +32,16 @@
                         </span>
                     </p>
                     <p class="card-text">@item.Description</p>
+                    <p class="card-text">
+                        <small class="text-muted">
+                            Автор: @item.User.Username<br />
+                            Контакты: @item.ContactPhone
+                        </small>
+                    </p>
                 </div>
                 <div class="card-footer">
                     <div class="btn-group w-100">
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary">Редактировать</a>
                         <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">Подробнее</a>
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Удалить</a>
                     </div>
                 </div>
             </div>

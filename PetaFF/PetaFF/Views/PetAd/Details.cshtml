@@ -1,0 +1,111 @@
+@model PetaFF.Models.PetAd
+@using PetaFF.Extensions
+@{
+    ViewData["Title"] = "Детали объявления";
+}
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-body">
+            <h2 class="card-title">@Model.Name</h2>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="badge bg-primary">@Model.Type</span>
+                <span class="badge bg-info">@Model.Status.GetDisplayName()</span>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.PhotoPath))
+            {
+                <img src="@Model.PhotoPath" class="img-fluid rounded mb-3" alt="Фото животного" style="max-height: 400px;">
+            }
+
+            <div class="mb-3">
+                <h5>Описание:</h5>
+                <p>@Model.Description</p>
+            </div>
+
+            <div class="mb-3">
+                <h5>Место пропажи:</h5>
+                <p>@Model.Street</p>
+            </div>
+
+            <div class="mb-3">
+                <h5>Контактный телефон:</h5>
+                <p>@Model.ContactPhone</p>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <form asp-controller="Interaction" asp-action="ToggleLike" method="post" class="d-inline">
+                        <input type="hidden" name="petAdId" value="@Model.Id" />
+                        <button type="submit" class="btn btn-outline-primary">
+                            <i class="fas fa-heart"></i> Лайк (@Model.Likes?.Count ?? 0)
+                        </button>
+                    </form>
+                </div>
+                <div>
+                    <form asp-controller="Interaction" asp-action="UpdateStatus" method="post" class="d-inline">
+                        <input type="hidden" name="petAdId" value="@Model.Id" />
+                        <select name="status" class="form-select d-inline-block w-auto" onchange="this.form.submit()">
+                            @foreach (PetStatus status in Enum.GetValues(typeof(PetStatus)))
+                            {
+                                if (Model.Status == status)
+                                {
+                                    <option value="@status" selected="selected">@status.GetDisplayName()</option>
+                                }
+                                else
+                                {
+                                    <option value="@status">@status.GetDisplayName()</option>
+                                }
+                            }
+                        </select>
+                    </form>
+                </div>
+            </div>
+
+            <div class="comments-section">
+                <h4>Комментарии (@Model.Comments?.Count ?? 0)</h4>
+                <form asp-controller="Interaction" asp-action="AddComment" method="post" class="mb-4">
+                    <input type="hidden" name="petAdId" value="@Model.Id" />
+                    <div class="form-group">
+                        <textarea name="text" class="form-control" rows="3" placeholder="Напишите комментарий..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-2">Отправить</button>
+                </form>
+
+                <div class="comments-list">
+                    @if (Model.Comments != null && Model.Comments.Any())
+                    {
+                        foreach (var comment in Model.Comments.OrderByDescending(c => c.CreatedAt))
+                        {
+                            <div class="card mb-2">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <h6 class="card-subtitle mb-2 text-muted">@comment.User.Username</h6>
+                                        <small class="text-muted">@comment.CreatedAt.ToString("dd.MM.yyyy HH:mm")</small>
+                                    </div>
+                                    <p class="card-text">@comment.Text</p>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">Пока нет комментариев</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Добавляем Font Awesome для иконок
+        if (!document.querySelector('link[href*="font-awesome"]')) {
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css';
+            document.head.appendChild(link);
+        }
+    </script>
+} 

@@ -1,10 +1,8 @@
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PetaFF.Data;
 using PetaFF.Models;
-using System.Security.Claims;
-using System.Linq;
+using System.Threading.Tasks;
 
 namespace PetaFF.Controllers
 {
@@ -17,78 +15,114 @@ namespace PetaFF.Controllers
             _context = context;
         }
 
-        [HttpGet]
         public IActionResult Login()
         {
+            if (HttpContext.Session.GetInt32("UserId") != null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(string username, string password)
         {
-            if (!ModelState.IsValid)
-                return View(model);
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+            {
+                ModelState.AddModelError("", "Введите имя пользователя и пароль");
+                return View();
+            }
 
-            var user = _context.Users.FirstOrDefault(u => u.Username == model.Username && u.Password == model.Password);
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.Username == username);
+
             if (user == null)
             {
-                ModelState.AddModelError(string.Empty, "Неверное имя пользователя или пароль");
-                return View(model);
+                ModelState.AddModelError("", "Пользователь не найден");
+                return View();
             }
 
-            var claims = new List<Claim>
+            if (user.Password != password)
             {
-                new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.Email, user.Email)
-            };
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                ModelState.AddModelError("", "Неверный пароль");
+                return View();
+            }
 
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(claimsIdentity));
-
-            return RedirectToAction("Index", "PetAd");
+            HttpContext.Session.SetInt32("UserId", user.Id);
+            HttpContext.Session.SetString("Username", user.Username);
+            return RedirectToAction("Index", "Home");
         }
 
-        [HttpGet]
         public IActionResult Register()
         {
+            if (HttpContext.Session.GetInt32("UserId") != null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register(User model)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register(User user)
         {
-            if (!ModelState.IsValid)
-                return View(model);
-
-            if (_context.Users.Any(u => u.Username == model.Username || u.Email == model.Email))
+            if (string.IsNullOrWhiteSpace(user.Username) || 
+                string.IsNullOrWhiteSpace(user.Password) || 
+                string.IsNullOrWhiteSpace(user.Email))
             {
-                ModelState.AddModelError(string.Empty, "Пользователь с таким именем или email уже существует");
-                return View(model);
+                ModelState.AddModelError("", "Все поля обязательны для заполнения");
+                return View(user);
             }
 
-            _context.Users.Add(model);
-            await _context.SaveChangesAsync();
-
-            // Автоматический вход после регистрации
-            var claims = new List<Claim>
+            // Проверка формата пароля
+            if (!System.Text.RegularExpressions.Regex.IsMatch(user.Password, @"^[a-zA-Z0-9]+$"))
             {
-                new Claim(ClaimTypes.Name, model.Username),
-                new Claim(ClaimTypes.Email, model.Email)
-            };
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(claimsIdentity));
+                ModelState.AddModelError("Password", "Пароль может содержать только английские буквы и цифры");
+                return View(user);
+            }
 
-            return RedirectToAction("Index", "PetAd");
+            if (user.Password.Length < 6 || user.Password.Length > 50)
+            {
+                ModelState.AddModelError("Password", "Пароль должен быть от 6 до 50 символов");
+                return View(user);
+            }
+
+            // Проверяем, не существует ли уже пользователь с таким именем или email
+            if (await _context.Users.AnyAsync(u => u.Username == user.Username))
+            {
+                ModelState.AddModelError("Username", "Пользователь с таким именем уже существует");
+                return View(user);
+            }
+
+            if (await _context.Users.AnyAsync(u => u.Email == user.Email))
+            {
+                ModelState.AddModelError("Email", "Пользователь с таким email уже существует");
+                return View(user);
+            }
+
+            try
+            {
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+
+                // Автоматически входим в систему после регистрации
+                HttpContext.Session.SetInt32("UserId", user.Id);
+                HttpContext.Session.SetString("Username", user.Username);
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch
+            {
+                ModelState.AddModelError("", "Произошла ошибка при регистрации. Попробуйте позже.");
+                return View(user);
+            }
         }
 
-        public async Task<IActionResult> Logout()
+        public IActionResult Logout()
         {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Login");
+            HttpContext.Session.Clear();
+            return RedirectToAction("Index", "Home");
         }
     }
 } 

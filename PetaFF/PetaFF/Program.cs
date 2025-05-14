@@ -7,6 +7,15 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+// Добавляем сервис для работы с сессиями
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 // Добавляем аутентификацию
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
@@ -27,6 +36,13 @@ builder.Services.Configure<IISServerOptions>(options =>
 
 var app = builder.Build();
 
+// Создаем папку uploads, если она не существует
+var uploadsPath = Path.Combine(app.Environment.WebRootPath, "uploads");
+if (!Directory.Exists(uploadsPath))
+{
+    Directory.CreateDirectory(uploadsPath);
+}
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -43,8 +59,11 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Добавляем middleware для работы с сессиями
+app.UseSession();
+
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Account}/{action=Register}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

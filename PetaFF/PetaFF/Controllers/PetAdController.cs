@@ -98,7 +98,7 @@ namespace PetaFF.Controllers
         // POST: PetAd/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Type,Description,Status,Street,ContactPhone")] PetAd petAd, IFormFile photo)
+        public async Task<IActionResult> Create([Bind("Name,Type,Description,Status,Street,ContactPhone,DateLost,LastSeenAddress")] PetAd petAd, IFormFile photo)
         {
             try
             {
@@ -112,7 +112,9 @@ namespace PetaFF.Controllers
                     string.IsNullOrWhiteSpace(petAd.Type) ||
                     string.IsNullOrWhiteSpace(petAd.Description) ||
                     string.IsNullOrWhiteSpace(petAd.Street) ||
-                    string.IsNullOrWhiteSpace(petAd.ContactPhone))
+                    string.IsNullOrWhiteSpace(petAd.ContactPhone) ||
+                    string.IsNullOrWhiteSpace(petAd.LastSeenAddress) ||
+                    petAd.DateLost == null)
                 {
                     ModelState.AddModelError("", "Пожалуйста, заполните все обязательные поля");
                     return View(petAd);
@@ -206,7 +208,7 @@ namespace PetaFF.Controllers
         // POST: PetAd/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Type,Description,Status,Street,ContactPhone,UserId,PhotoPath")] PetAd petAd, IFormFile photo)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Type,Description,Status,Street,ContactPhone,UserId,PhotoPath,DateLost,LastSeenAddress")] PetAd petAd, IFormFile photo)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null)
@@ -224,99 +226,107 @@ namespace PetaFF.Controllers
                 return NotFound();
             }
 
-            // Формируем список статусов из глобального enum
-            var statusList = Enum.GetValues(typeof(PetaFF.Models.PetStatus))
-                .Cast<PetaFF.Models.PetStatus>()
-                .Select(s => new SelectListItem
-                {
-                    Value = s.ToString(),
-                    Text = GetEnumDisplayName(s)
-                }).ToList();
-            ViewBag.StatusList = statusList;
-
-            if (ModelState.IsValid)
+            // Проверяем обязательные поля
+            if (string.IsNullOrWhiteSpace(petAd.Name) ||
+                string.IsNullOrWhiteSpace(petAd.Type) ||
+                string.IsNullOrWhiteSpace(petAd.Description) ||
+                string.IsNullOrWhiteSpace(petAd.Street) ||
+                string.IsNullOrWhiteSpace(petAd.ContactPhone) ||
+                string.IsNullOrWhiteSpace(petAd.LastSeenAddress) ||
+                petAd.DateLost == null)
             {
-                try
+                ModelState.AddModelError("", "Пожалуйста, заполните все обязательные поля");
+                var statusList = Enum.GetValues(typeof(PetaFF.Models.PetStatus))
+                    .Cast<PetaFF.Models.PetStatus>()
+                    .Select(s => new SelectListItem
+                    {
+                        Value = s.ToString(),
+                        Text = GetEnumDisplayName(s)
+                    }).ToList();
+                ViewBag.StatusList = statusList;
+                return View(petAd);
+            }
+
+            try
+            {
+                var existingPetAd = await _context.PetAds.FindAsync(id);
+                if (existingPetAd == null)
                 {
-                    var existingPetAd = await _context.PetAds.FindAsync(id);
-                    if (existingPetAd == null)
-                    {
-                        return NotFound();
-                    }
+                    return NotFound();
+                }
 
-                    // Обновляем основные поля
-                    existingPetAd.Name = petAd.Name;
-                    existingPetAd.Type = petAd.Type;
-                    existingPetAd.Description = petAd.Description;
-                    existingPetAd.Status = petAd.Status;
-                    existingPetAd.Street = petAd.Street;
-                    existingPetAd.ContactPhone = petAd.ContactPhone;
+                // Обновляем основные поля
+                existingPetAd.Name = petAd.Name;
+                existingPetAd.Type = petAd.Type;
+                existingPetAd.Description = petAd.Description;
+                existingPetAd.Status = petAd.Status;
+                existingPetAd.Street = petAd.Street;
+                existingPetAd.ContactPhone = petAd.ContactPhone;
+                existingPetAd.DateLost = petAd.DateLost;
+                existingPetAd.LastSeenAddress = petAd.LastSeenAddress;
 
-                    // Обрабатываем новое фото, если оно было загружено
-                    if (photo != null && photo.Length > 0)
+                // Обрабатываем новое фото, если оно было загружено
+                if (photo != null && photo.Length > 0)
+                {
+                    var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp" };
+                    var fileExtension = Path.GetExtension(photo.FileName).ToLowerInvariant();
+                    if (!allowedExtensions.Contains(fileExtension))
                     {
-                        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp" };
-                        var fileExtension = Path.GetExtension(photo.FileName).ToLowerInvariant();
-                        if (!allowedExtensions.Contains(fileExtension))
-                        {
-                            ModelState.AddModelError("PhotoPath", "Недопустимый формат файла. Разрешены только JPG, PNG, GIF и BMP.");
-                            petAd.PhotoPath = existingPetAd.PhotoPath; // показать текущее фото
-                            return View(petAd);
-                        }
-                        string fileName = $"{Guid.NewGuid()}{fileExtension}";
-                        string uploadsFolder = Path.Combine(_environment.WebRootPath, "uploads");
-                        if (!Directory.Exists(uploadsFolder))
-                        {
-                            Directory.CreateDirectory(uploadsFolder);
-                        }
-                        string filePath = Path.Combine(uploadsFolder, fileName);
-                        using (var fileStream = new FileStream(filePath, FileMode.Create))
-                        {
-                            await photo.CopyToAsync(fileStream);
-                        }
-                        if (!string.IsNullOrEmpty(existingPetAd.PhotoPath))
-                        {
-                            var oldPhotoPath = Path.Combine(_environment.WebRootPath, existingPetAd.PhotoPath.TrimStart('/'));
-                            if (System.IO.File.Exists(oldPhotoPath))
+                        ModelState.AddModelError("PhotoPath", "Недопустимый формат файла. Разрешены только JPG, PNG, GIF и BMP.");
+                        petAd.PhotoPath = existingPetAd.PhotoPath;
+                        var statusList = Enum.GetValues(typeof(PetaFF.Models.PetStatus))
+                            .Cast<PetaFF.Models.PetStatus>()
+                            .Select(s => new SelectListItem
                             {
-                                System.IO.File.Delete(oldPhotoPath);
-                            }
-                        }
-                        existingPetAd.PhotoPath = $"/uploads/{fileName}";
+                                Value = s.ToString(),
+                                Text = GetEnumDisplayName(s)
+                            }).ToList();
+                        ViewBag.StatusList = statusList;
+                        return View(petAd);
                     }
 
-                    _context.Update(existingPetAd);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PetAdExists(petAd.Id))
+                    string fileName = $"{Guid.NewGuid()}{fileExtension}";
+                    string uploadsFolder = Path.Combine(_environment.WebRootPath, "uploads");
+                    if (!Directory.Exists(uploadsFolder))
                     {
-                        return NotFound();
+                        Directory.CreateDirectory(uploadsFolder);
                     }
-                    else
+                    string filePath = Path.Combine(uploadsFolder, fileName);
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
                     {
-                        throw;
+                        await photo.CopyToAsync(fileStream);
                     }
+
+                    // Удаляем старое фото, если оно существует
+                    if (!string.IsNullOrEmpty(existingPetAd.PhotoPath))
+                    {
+                        var oldPhotoPath = Path.Combine(_environment.WebRootPath, existingPetAd.PhotoPath.TrimStart('/'));
+                        if (System.IO.File.Exists(oldPhotoPath))
+                        {
+                            System.IO.File.Delete(oldPhotoPath);
+                        }
+                    }
+
+                    existingPetAd.PhotoPath = $"/uploads/{fileName}";
                 }
+
+                _context.Update(existingPetAd);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
-            // Если валидация не прошла, показываем текущее фото и обязательно передаём ViewBag.StatusList
-            var dbPetAd = await _context.PetAds.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
-            if (dbPetAd != null && string.IsNullOrEmpty(petAd.PhotoPath))
+            catch (Exception ex)
             {
-                petAd.PhotoPath = dbPetAd.PhotoPath;
+                ModelState.AddModelError("", "Произошла ошибка при сохранении изменений: " + ex.Message);
+                var statusList = Enum.GetValues(typeof(PetaFF.Models.PetStatus))
+                    .Cast<PetaFF.Models.PetStatus>()
+                    .Select(s => new SelectListItem
+                    {
+                        Value = s.ToString(),
+                        Text = GetEnumDisplayName(s)
+                    }).ToList();
+                ViewBag.StatusList = statusList;
+                return View(petAd);
             }
-            // Повторно формируем список статусов для ViewBag
-            statusList = Enum.GetValues(typeof(PetaFF.Models.PetStatus))
-                .Cast<PetaFF.Models.PetStatus>()
-                .Select(s => new SelectListItem
-                {
-                    Value = s.ToString(),
-                    Text = GetEnumDisplayName(s)
-                }).ToList();
-            ViewBag.StatusList = statusList;
-            return View(petAd);
         }
 
         // GET: PetAd/Delete/5
@@ -355,9 +365,24 @@ namespace PetaFF.Controllers
             }
 
             var petAd = await _context.PetAds
+                .Include(p => p.Comments)
                 .FirstOrDefaultAsync(p => p.Id == id && p.UserId == userId);
             if (petAd != null)
             {
+                // Удаляем файл фотографии, если он существует
+                if (!string.IsNullOrEmpty(petAd.PhotoPath))
+                {
+                    var photoPath = Path.Combine(_environment.WebRootPath, petAd.PhotoPath.TrimStart('/'));
+                    if (System.IO.File.Exists(photoPath))
+                    {
+                        System.IO.File.Delete(photoPath);
+                    }
+                }
+
+                // Удаляем все комментарии
+                _context.Comments.RemoveRange(petAd.Comments);
+
+                // Удаляем объявление
                 _context.PetAds.Remove(petAd);
                 await _context.SaveChangesAsync();
             }

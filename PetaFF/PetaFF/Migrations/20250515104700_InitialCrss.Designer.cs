@@ -12,8 +12,8 @@ using PetaFF.Data;
 namespace PetaFF.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250515093840_InitialCrseg")]
-    partial class InitialCrseg
+    [Migration("20250515104700_InitialCrss")]
+    partial class InitialCrss
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -104,7 +104,14 @@ namespace PetaFF.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("DateLost")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastSeenAddress")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -113,7 +120,6 @@ namespace PetaFF.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhotoPath")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Status")

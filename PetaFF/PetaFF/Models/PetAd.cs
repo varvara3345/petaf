@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using PetaFF.Models;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace PetaFF.Models
 {
@@ -23,7 +24,7 @@ namespace PetaFF.Models
         public string Description { get; set; }
 
         [Display(Name = "Фото")]
-        public string PhotoPath { get; set; }
+        public string? PhotoPath { get; set; }
 
         [Required(ErrorMessage = "Пожалуйста, введите улицу")]
         [Display(Name = "Улица")]
@@ -36,10 +37,18 @@ namespace PetaFF.Models
         [Display(Name = "Статус")]
         public PetStatus Status { get; set; } = PetStatus.InSearch;
 
+        [Display(Name = "Дата потери")]
+        [DataType(DataType.Date)]
+        public DateTime? DateLost { get; set; }
+
+        [Display(Name = "Где видели в последний раз")]
+        public string LastSeenAddress { get; set; }
+
         public int UserId { get; set; }
 
         [ForeignKey("UserId")]
-        public User User { get; set; }
+        [BindNever]
+        public User? User { get; set; }
 
         public ICollection<Comment> Comments { get; set; } = new List<Comment>();
         public ICollection<Like> Likes { get; set; } = new List<Like>();

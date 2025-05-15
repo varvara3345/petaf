@@ -53,9 +53,15 @@
                 </div>
 
                 <div class="form-group mb-3">
-                    <label asp-for="Street" class="control-label">Улица</label>
-                    <input asp-for="Street" class="form-control" />
-                    <span asp-validation-for="Street" class="text-danger"></span>
+                    <label asp-for="Address" class="control-label">Адрес пользователя</label>
+                    <input asp-for="Address" class="form-control" />
+                    <span asp-validation-for="Address" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="LastSeenAddress" class="control-label">Место, где видели в последний раз</label>
+                    <input asp-for="LastSeenAddress" class="form-control" />
+                    <span asp-validation-for="LastSeenAddress" class="text-danger"></span>
                 </div>
 
                 <div class="form-group mb-3">
@@ -68,12 +74,6 @@
                     <label asp-for="DateLost" class="control-label">Дата потери</label>
                     <input asp-for="DateLost" class="form-control" type="date" />
                     <span asp-validation-for="DateLost" class="text-danger"></span>
-                </div>
-
-                <div class="form-group mb-3">
-                    <label asp-for="LastSeenAddress" class="control-label">Где видели в последний раз</label>
-                    <input asp-for="LastSeenAddress" class="form-control" />
-                    <span asp-validation-for="LastSeenAddress" class="text-danger"></span>
                 </div>
 
                 <div class="form-group mb-3">

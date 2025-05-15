@@ -27,8 +27,13 @@
             </div>
 
             <div class="mb-3">
-                <h5>Место пропажи:</h5>
-                <p>@Model.Street</p>
+                <h5>Адрес пользователя:</h5>
+                <p>@Model.Address</p>
+            </div>
+
+            <div class="mb-3">
+                <h5>Место, где видели в последний раз:</h5>
+                <p>@(string.IsNullOrWhiteSpace(Model.LastSeenAddress) ? "-" : Model.LastSeenAddress)</p>
             </div>
 
             <div class="mb-3">

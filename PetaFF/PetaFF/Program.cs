@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using PetaFF.Data;
+using PetaFF.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,6 +42,9 @@ builder.Services.Configure<IISServerOptions>(options =>
 {
     options.AutomaticAuthentication = false;
 });
+
+builder.Services.Configure<YandexMapsSettings>(
+    builder.Configuration.GetSection("YandexMaps"));
 
 var app = builder.Build();
 

@@ -24,8 +24,8 @@
                 <dt class="col-sm-3">Статус</dt>
                 <dd class="col-sm-9">@Model.Status</dd>
 
-                <dt class="col-sm-3">Улица</dt>
-                <dd class="col-sm-9">@Model.Street</dd>
+                <dt class="col-sm-3">Адрес</dt>
+                <dd class="col-sm-9">@Model.Address</dd>
 
                 <dt class="col-sm-3">Контактный телефон</dt>
                 <dd class="col-sm-9">@Model.ContactPhone</dd>
@@ -33,8 +33,8 @@
                 <dt class="col-sm-3">Дата пропажи</dt>
                 <dd class="col-sm-9">@Model.DateLost?.ToString("dd.MM.yyyy")</dd>
 
-                <dt class="col-sm-3">Последний адрес</dt>
-                <dd class="col-sm-9">@Model.LastSeenAddress</dd>
+                <dt class="col-sm-3">Адрес</dt>
+                <dd class="col-sm-9">@Model.Address</dd>
             </dl>
 
             @if (!string.IsNullOrEmpty(Model.PhotoPath))

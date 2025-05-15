@@ -11,6 +11,8 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
+using System.Net.Http;
+using Newtonsoft.Json.Linq;
 
 namespace PetaFF.Controllers
 {
@@ -18,11 +20,44 @@ namespace PetaFF.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _environment;
+        private readonly HttpClient _httpClient;
 
         public PetAdController(ApplicationDbContext context, IWebHostEnvironment environment)
         {
             _context = context;
             _environment = environment;
+            _httpClient = new HttpClient();
+        }
+
+        private async Task<(double? latitude, double? longitude)> GetCoordinatesAsync(string address)
+        {
+            try
+            {
+                var encodedAddress = Uri.EscapeDataString(address + ", Минск");
+                var response = await _httpClient.GetAsync($"https://geocode-maps.yandex.ru/1.x/?apikey=4c3c3c3c-3c3c-3c3c-3c3c-3c3c3c3c3c3c&geocode={encodedAddress}&format=json");
+                
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    var json = JObject.Parse(content);
+                    
+                    var pos = json["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]["Point"]["pos"]?.ToString();
+                    if (!string.IsNullOrEmpty(pos))
+                    {
+                        var coords = pos.Split(' ');
+                        if (coords.Length == 2)
+                        {
+                            return (double.Parse(coords[1]), double.Parse(coords[0]));
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // В случае ошибки возвращаем null
+            }
+            
+            return (null, null);
         }
 
         // GET: PetAd
@@ -98,7 +133,7 @@ namespace PetaFF.Controllers
         // POST: PetAd/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Type,Description,Status,Street,ContactPhone,DateLost,LastSeenAddress")] PetAd petAd, IFormFile photo)
+        public async Task<IActionResult> Create([Bind("Name,Type,Description,Status,Address,ContactPhone,DateLost,LastSeenAddress")] PetAd petAd, IFormFile photo)
         {
             try
             {
@@ -111,14 +146,19 @@ namespace PetaFF.Controllers
                 if (string.IsNullOrWhiteSpace(petAd.Name) ||
                     string.IsNullOrWhiteSpace(petAd.Type) ||
                     string.IsNullOrWhiteSpace(petAd.Description) ||
-                    string.IsNullOrWhiteSpace(petAd.Street) ||
+                    string.IsNullOrWhiteSpace(petAd.Address) ||
                     string.IsNullOrWhiteSpace(petAd.ContactPhone) ||
-                    string.IsNullOrWhiteSpace(petAd.LastSeenAddress) ||
                     petAd.DateLost == null)
                 {
                     ModelState.AddModelError("", "Пожалуйста, заполните все обязательные поля");
                     return View(petAd);
                 }
+
+                // Получаем координаты по адресу
+                var (latitude, longitude) = await GetCoordinatesAsync(petAd.Address);
+                petAd.Latitude = latitude;
+                petAd.Longitude = longitude;
+                petAd.Location = latitude.HasValue && longitude.HasValue ? $"{latitude},{longitude}" : null;
 
                 if (photo != null && photo.Length > 0)
                 {
@@ -208,7 +248,7 @@ namespace PetaFF.Controllers
         // POST: PetAd/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Type,Description,Status,Street,ContactPhone,UserId,PhotoPath,DateLost,LastSeenAddress")] PetAd petAd, IFormFile photo)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Type,Description,Status,Address,ContactPhone,UserId,PhotoPath,DateLost,LastSeenAddress")] PetAd petAd, IFormFile photo)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null)
@@ -230,9 +270,8 @@ namespace PetaFF.Controllers
             if (string.IsNullOrWhiteSpace(petAd.Name) ||
                 string.IsNullOrWhiteSpace(petAd.Type) ||
                 string.IsNullOrWhiteSpace(petAd.Description) ||
-                string.IsNullOrWhiteSpace(petAd.Street) ||
+                string.IsNullOrWhiteSpace(petAd.Address) ||
                 string.IsNullOrWhiteSpace(petAd.ContactPhone) ||
-                string.IsNullOrWhiteSpace(petAd.LastSeenAddress) ||
                 petAd.DateLost == null)
             {
                 ModelState.AddModelError("", "Пожалуйста, заполните все обязательные поля");
@@ -255,15 +294,23 @@ namespace PetaFF.Controllers
                     return NotFound();
                 }
 
+                // Если адрес изменился, получаем новые координаты
+                if (existingPetAd.Address != petAd.Address)
+                {
+                    var (latitude, longitude) = await GetCoordinatesAsync(petAd.Address);
+                    existingPetAd.Latitude = latitude;
+                    existingPetAd.Longitude = longitude;
+                    existingPetAd.Location = latitude.HasValue && longitude.HasValue ? $"{latitude},{longitude}" : null;
+                }
+
                 // Обновляем основные поля
                 existingPetAd.Name = petAd.Name;
                 existingPetAd.Type = petAd.Type;
                 existingPetAd.Description = petAd.Description;
                 existingPetAd.Status = petAd.Status;
-                existingPetAd.Street = petAd.Street;
+                existingPetAd.Address = petAd.Address;
                 existingPetAd.ContactPhone = petAd.ContactPhone;
                 existingPetAd.DateLost = petAd.DateLost;
-                existingPetAd.LastSeenAddress = petAd.LastSeenAddress;
 
                 // Обрабатываем новое фото, если оно было загружено
                 if (photo != null && photo.Length > 0)

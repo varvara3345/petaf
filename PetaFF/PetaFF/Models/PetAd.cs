@@ -26,10 +26,6 @@ namespace PetaFF.Models
         [Display(Name = "Фото")]
         public string? PhotoPath { get; set; }
 
-        [Required(ErrorMessage = "Пожалуйста, введите улицу")]
-        [Display(Name = "Улица")]
-        public string Street { get; set; }
-
         [Required(ErrorMessage = "Пожалуйста, введите контактный телефон")]
         [Display(Name = "Контактный телефон")]
         public string ContactPhone { get; set; }
@@ -41,8 +37,15 @@ namespace PetaFF.Models
         [DataType(DataType.Date)]
         public DateTime? DateLost { get; set; }
 
-        [Display(Name = "Где видели в последний раз")]
-        public string LastSeenAddress { get; set; }
+        [Required(ErrorMessage = "Пожалуйста, введите адрес пользователя")]
+        [Display(Name = "Адрес пользователя")]
+        public string Address { get; set; }
+
+        [Display(Name = "Место, где видели в последний раз")]
+        public string? LastSeenAddress { get; set; }
+
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
 
         public int UserId { get; set; }
 
@@ -52,6 +55,9 @@ namespace PetaFF.Models
 
         public ICollection<Comment> Comments { get; set; } = new List<Comment>();
         public ICollection<Like> Likes { get; set; } = new List<Like>();
+
+        public string? Location { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 
     public enum PetStatus

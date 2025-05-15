@@ -1,0 +1,44 @@
+@model IEnumerable<dynamic>
+
+@{
+    ViewData["Title"] = "Карта объявлений";
+}
+
+<div class="container mt-4">
+    <h2>Карта объявлений</h2>
+    <div id="map" style="width: 100%; height: 600px;"></div>
+</div>
+
+@section Scripts {
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=@ViewBag.ApiKey&lang=ru_RU" type="text/javascript"></script>
+    <script type="text/javascript">
+        ymaps.ready(function () {
+            var myMap = new ymaps.Map('map', {
+                center: [53.9022, 27.5618], // Минск
+                zoom: 11
+            });
+
+            var markers = @Html.Raw(Json.Serialize(Model));
+
+            markers.forEach(function(marker) {
+                var coordinates = marker.location.split(',').map(Number);
+                var myPlacemark = new ymaps.Placemark(coordinates, {
+                    balloonContent: `
+                        <div class="card" style="width: 200px;">
+                            ${marker.photoPath ? `<img src="${marker.photoPath}" class="card-img-top" alt="${marker.name}">` : ''}
+                            <div class="card-body">
+                                <h5 class="card-title">${marker.name}</h5>
+                                <p class="card-text">${marker.type}</p>
+                                <a href="/PetAd/Details/${marker.id}" class="btn btn-primary">Подробнее</a>
+                            </div>
+                        </div>
+                    `
+                }, {
+                    preset: 'islands#bluePetIcon'
+                });
+
+                myMap.geoObjects.add(myPlacemark);
+            });
+        });
+    </script>
+} 

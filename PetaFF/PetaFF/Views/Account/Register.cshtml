@@ -4,55 +4,61 @@
     ViewData["Title"] = "Регистрация";
 }
 
-<div class="row justify-content-center">
-    <div class="col-md-4">
-        <h2>@ViewData["Title"]</h2>
-        <form asp-action="Register" method="post">
-            @Html.AntiForgeryToken()
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            
-            <div class="form-group">
-                <label asp-for="Username" class="control-label"></label>
-                <input asp-for="Username" class="form-control" required />
-                <span asp-validation-for="Username" class="text-danger"></span>
-            </div>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="text-center">@ViewData["Title"]</h2>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Register" method="post">
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="username" class="control-label">Имя пользователя</label>
+                            <input type="text" id="username" name="username" class="form-control" required />
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="email" class="control-label">Email</label>
+                            <input type="email" id="email" name="email" class="form-control" required />
+                        </div>
 
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" type="email" required />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
+                        <div class="form-group mb-3">
+                            <label for="firstName" class="control-label">Имя</label>
+                            <input type="text" id="firstName" name="firstName" class="form-control" required />
+                        </div>
 
-            <div class="form-group">
-                <label asp-for="Password" class="control-label"></label>
-                <input asp-for="Password" class="form-control" type="password" required />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
+                        <div class="form-group mb-3">
+                            <label for="lastName" class="control-label">Фамилия</label>
+                            <input type="text" id="lastName" name="lastName" class="form-control" required />
+                        </div>
 
-            <div class="form-group">
-                <label asp-for="FirstName" class="control-label"></label>
-                <input asp-for="FirstName" class="form-control" required />
-                <span asp-validation-for="FirstName" class="text-danger"></span>
+                        <div class="form-group mb-3">
+                            <label for="phoneNumber" class="control-label">Номер телефона</label>
+                            <input type="tel" id="phoneNumber" name="phoneNumber" class="form-control" required />
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="password" class="control-label">Пароль</label>
+                            <input type="password" id="password" name="password" class="form-control" required />
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="confirmPassword" class="control-label">Подтвердите пароль</label>
+                            <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" required />
+                        </div>
+                        
+                        <div class="form-group text-center">
+                            <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center">
+                    <p>Уже есть аккаунт? <a asp-action="Login">Войти</a></p>
+                </div>
             </div>
-
-            <div class="form-group">
-                <label asp-for="LastName" class="control-label"></label>
-                <input asp-for="LastName" class="form-control" required />
-                <span asp-validation-for="LastName" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="PhoneNumber" class="control-label"></label>
-                <input asp-for="PhoneNumber" class="form-control" required />
-                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-            </div>
-
-            <div class="form-group mt-3">
-                <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
-            </div>
-        </form>
-        <div class="mt-3">
-            <p>Уже есть аккаунт? <a asp-action="Login">Войти</a></p>
         </div>
     </div>
 </div>

@@ -4,6 +4,14 @@ using PetaFF.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Устанавливаем путь к базе данных и создаем папку App_Data
+var dataDirectory = Path.Combine(builder.Environment.ContentRootPath, "App_Data");
+if (!Directory.Exists(dataDirectory))
+{
+    Directory.CreateDirectory(dataDirectory);
+}
+AppDomain.CurrentDomain.SetData("DataDirectory", dataDirectory);
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 

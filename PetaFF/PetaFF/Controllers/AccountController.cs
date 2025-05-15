@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PetaFF.Data;
 using PetaFF.Models;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace PetaFF.Controllers
@@ -25,33 +26,20 @@ namespace PetaFF.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(string username, string password)
         {
-            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
-            {
-                ModelState.AddModelError("", "Введите имя пользователя и пароль");
-                return View();
-            }
-
             var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Username == username);
+                .FirstOrDefaultAsync(u => u.Username == username && u.Password == password);
 
-            if (user == null)
+            if (user != null)
             {
-                ModelState.AddModelError("", "Пользователь не найден");
-                return View();
+                HttpContext.Session.SetInt32("UserId", user.Id);
+                HttpContext.Session.SetString("Username", user.Username);
+                return RedirectToAction("Index", "Home");
             }
 
-            if (user.Password != password)
-            {
-                ModelState.AddModelError("", "Неверный пароль");
-                return View();
-            }
-
-            HttpContext.Session.SetInt32("UserId", user.Id);
-            HttpContext.Session.SetString("Username", user.Username);
-            return RedirectToAction("Index", "Home");
+            ModelState.AddModelError("", "Неверное имя пользователя или пароль");
+            return View();
         }
 
         public IActionResult Register()
@@ -64,59 +52,51 @@ namespace PetaFF.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(User user)
+        public async Task<IActionResult> Register(string username, string password, string confirmPassword, string email, string firstName, string lastName, string phoneNumber)
         {
-            if (string.IsNullOrWhiteSpace(user.Username) || 
-                string.IsNullOrWhiteSpace(user.Password) || 
-                string.IsNullOrWhiteSpace(user.Email))
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password) || 
+                string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(firstName) || 
+                string.IsNullOrWhiteSpace(lastName) || string.IsNullOrWhiteSpace(phoneNumber))
             {
                 ModelState.AddModelError("", "Все поля обязательны для заполнения");
-                return View(user);
+                return View();
             }
 
-            // Проверка формата пароля
-            if (!System.Text.RegularExpressions.Regex.IsMatch(user.Password, @"^[a-zA-Z0-9]+$"))
+            if (password != confirmPassword)
             {
-                ModelState.AddModelError("Password", "Пароль может содержать только английские буквы и цифры");
-                return View(user);
+                ModelState.AddModelError("", "Пароли не совпадают");
+                return View();
             }
 
-            if (user.Password.Length < 6 || user.Password.Length > 50)
+            if (await _context.Users.AnyAsync(u => u.Username == username))
             {
-                ModelState.AddModelError("Password", "Пароль должен быть от 6 до 50 символов");
-                return View(user);
+                ModelState.AddModelError("", "Пользователь с таким именем уже существует");
+                return View();
             }
 
-            // Проверяем, не существует ли уже пользователь с таким именем или email
-            if (await _context.Users.AnyAsync(u => u.Username == user.Username))
+            if (await _context.Users.AnyAsync(u => u.Email == email))
             {
-                ModelState.AddModelError("Username", "Пользователь с таким именем уже существует");
-                return View(user);
+                ModelState.AddModelError("", "Пользователь с таким email уже существует");
+                return View();
             }
 
-            if (await _context.Users.AnyAsync(u => u.Email == user.Email))
+            var user = new User
             {
-                ModelState.AddModelError("Email", "Пользователь с таким email уже существует");
-                return View(user);
-            }
+                Username = username,
+                Password = password,
+                Email = email,
+                FirstName = firstName,
+                LastName = lastName,
+                PhoneNumber = phoneNumber
+            };
 
-            try
-            {
-                _context.Users.Add(user);
-                await _context.SaveChangesAsync();
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
 
-                // Автоматически входим в систему после регистрации
-                HttpContext.Session.SetInt32("UserId", user.Id);
-                HttpContext.Session.SetString("Username", user.Username);
+            HttpContext.Session.SetInt32("UserId", user.Id);
+            HttpContext.Session.SetString("Username", user.Username);
 
-                return RedirectToAction("Index", "Home");
-            }
-            catch
-            {
-                ModelState.AddModelError("", "Произошла ошибка при регистрации. Попробуйте позже.");
-                return View(user);
-            }
+            return RedirectToAction("Index", "Home");
         }
 
         public IActionResult Logout()

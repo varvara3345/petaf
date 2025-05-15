@@ -17,16 +17,23 @@ namespace PetaFF.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var latestAds = _context.PetAds
-                .Include(a => a.Comments)
-                .Include(a => a.Likes)
-                .OrderByDescending(a => a.Id)
-                .Take(4)
-                .ToList();
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+            {
+                return View(new List<PetAd>());
+            }
 
-            return View(latestAds);
+            var petAds = await _context.PetAds
+                .Include(p => p.User)
+                .Include(p => p.Comments)
+                .Include(p => p.Likes)
+                .OrderByDescending(p => p.Id)
+                .Take(5)
+                .ToListAsync();
+
+            return View(petAds);
         }
 
         public IActionResult Privacy()

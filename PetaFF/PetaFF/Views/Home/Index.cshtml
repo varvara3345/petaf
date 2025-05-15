@@ -5,47 +5,42 @@
 }
 
 <div class="container mt-4">
-    <div class="jumbotron">
-        <h1 class="display-4">Добро пожаловать в PetaFF!</h1>
-        <p class="lead">Платформа для поиска пропавших питомцев и помощи им.</p>
-        <hr class="my-4">
-        <p>Здесь вы можете разместить объявление о пропавшем питомце или помочь в поиске.</p>
-        <a class="btn btn-primary btn-lg" asp-controller="PetAd" asp-action="Create" role="button">Разместить объявление</a>
-    </div>
-
-    <h2 class="mt-5 mb-4">Последние объявления</h2>
     <div class="row">
-        @foreach (var ad in Model.Take(4))
-        {
-            <div class="col-md-3 mb-4">
-                <div class="card h-100">
-                    @if (!string.IsNullOrEmpty(ad.PhotoPath))
-                    {
-                        <img src="@ad.PhotoPath" class="card-img-top" alt="Фото животного" style="height: 200px; object-fit: cover;">
-                    }
-                    <div class="card-body">
-                        <h5 class="card-title">@ad.Name</h5>
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="badge bg-primary">@ad.Type</span>
-                            <span class="badge @(ad.Status switch {
-                                PetStatus.InSearch => "bg-danger",
-                                PetStatus.Found => "bg-success",
-                                PetStatus.TemporaryShelter => "bg-warning",
-                                PetStatus.InShelter => "bg-info",
-                                _ => "bg-secondary"
-                            })">@ad.Status.GetDisplayName()</span>
-                        </div>
-                        <p class="card-text">@(ad.Description.Length > 50 ? ad.Description.Substring(0, 50) + "..." : ad.Description)</p>
-                    </div>
-                    <div class="card-footer">
-                        <a asp-controller="PetAd" asp-action="Details" asp-route-id="@ad.Id" class="btn btn-primary btn-sm">Подробнее</a>
-                    </div>
+        <div class="col-md-12">
+            <h2 class="text-center mb-4">Добро пожаловать в PetaFF</h2>
+            
+            @if (Context.Session.GetInt32("UserId") == null)
+            {
+                <div class="alert alert-info text-center">
+                    <h4>Для просмотра объявлений необходимо войти в систему</h4>
+                    <p>Пожалуйста, <a asp-controller="Account" asp-action="Login" class="alert-link">войдите</a> или <a asp-controller="Account" asp-action="Register" class="alert-link">зарегистрируйтесь</a></p>
                 </div>
-            </div>
-        }
-    </div>
-    <div class="text-center mt-4">
-        <a asp-controller="PetAd" asp-action="OtherAds" class="btn btn-outline-primary">Смотреть все объявления</a>
+            }
+            else
+            {
+                <h3 class="mb-4">Последние объявления</h3>
+                <div class="row">
+                    @foreach (var ad in Model)
+                    {
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100">
+                                @if (!string.IsNullOrEmpty(ad.PhotoPath))
+                                {
+                                    <img src="@ad.PhotoPath" class="card-img-top" alt="Фото животного" style="height: 200px; object-fit: cover;">
+                                }
+                                <div class="card-body">
+                                    <h5 class="card-title">@ad.Name</h5>
+                                    <p class="card-text">@ad.Description</p>
+                                    <p class="card-text"><small class="text-muted">Тип: @ad.Type</small></p>
+                                    <p class="card-text"><small class="text-muted">Статус: @ad.Status</small></p>
+                                    <a asp-controller="PetAd" asp-action="Details" asp-route-id="@ad.Id" class="btn btn-primary">Подробнее</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
     </div>
 </div>
 

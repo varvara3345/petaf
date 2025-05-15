@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace PetaFF.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCrss : Migration
+    public partial class Initialaaa : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

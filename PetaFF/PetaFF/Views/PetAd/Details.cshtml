@@ -2,6 +2,9 @@
 @using PetaFF.Extensions
 @{
     ViewData["Title"] = "Детали объявления";
+    var userId = Context.Session.GetInt32("UserId");
+    bool isOwner = userId != null && userId == Model.UserId;
+    bool hasLiked = Model.Likes != null && userId != null && Model.Likes.Any(l => l.UserId == userId);
 }
 
 <div class="container mt-4">
@@ -35,17 +38,24 @@
 
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
-                    <form asp-controller="Interaction" asp-action="ToggleLike" method="post" class="d-inline">
-                        <input type="hidden" name="petAdId" value="@Model.Id" />
-                        <button type="submit" class="btn btn-outline-primary">
-                            <i class="fas fa-heart"></i> Лайк (@Model.Likes?.Count ?? 0)
-                        </button>
-                    </form>
+                    @if (!isOwner)
+                    {
+                        <form asp-controller="Interaction" asp-action="ToggleLike" method="post" class="d-inline">
+                            <input type="hidden" name="petAdId" value="@Model.Id" />
+                            <button type="submit" class="btn @(hasLiked ? "btn-primary" : "btn-outline-primary")">
+                                <i class="fas fa-heart"></i> @(hasLiked ? "Убрать лайк" : "Лайк") (@(Model.Likes?.Count ?? 0))
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <span class="text-muted"><i class="fas fa-heart"></i> Лайков: @(Model.Likes?.Count ?? 0)</span>
+                    }
                 </div>
                 <div>
                     <form asp-controller="Interaction" asp-action="UpdateStatus" method="post" class="d-inline">
                         <input type="hidden" name="petAdId" value="@Model.Id" />
-                        <select name="status" class="form-select d-inline-block w-auto" onchange="this.form.submit()">
+                        <select name="status" class="form-select d-inline-block w-auto" onchange="this.form.submit()" @(isOwner ? "" : "disabled")>
                             @foreach (PetStatus status in Enum.GetValues(typeof(PetStatus)))
                             {
                                 if (Model.Status == status)
@@ -63,15 +73,17 @@
             </div>
 
             <div class="comments-section">
-                <h4>Комментарии (@Model.Comments?.Count ?? 0)</h4>
-                <form asp-controller="Interaction" asp-action="AddComment" method="post" class="mb-4">
-                    <input type="hidden" name="petAdId" value="@Model.Id" />
-                    <div class="form-group">
-                        <textarea name="text" class="form-control" rows="3" placeholder="Напишите комментарий..."></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary mt-2">Отправить</button>
-                </form>
-
+                <h4>Комментарии (@(Model.Comments?.Count ?? 0))</h4>
+                @if (!isOwner)
+                {
+                    <form asp-controller="Interaction" asp-action="AddComment" method="post" class="mb-4">
+                        <input type="hidden" name="petAdId" value="@Model.Id" />
+                        <div class="form-group">
+                            <textarea name="text" class="form-control" rows="3" placeholder="Напишите комментарий..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-2">Отправить</button>
+                    </form>
+                }
                 <div class="comments-list">
                     @if (Model.Comments != null && Model.Comments.Any())
                     {

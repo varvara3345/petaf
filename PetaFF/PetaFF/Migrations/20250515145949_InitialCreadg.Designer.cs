@@ -12,8 +12,8 @@ using PetaFF.Data;
 namespace PetaFF.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250515125916_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250515145949_InitialCreadg")]
+    partial class InitialCreadg
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

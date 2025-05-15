@@ -8,6 +8,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 
 namespace PetaFF.Controllers
 {
@@ -187,13 +190,23 @@ namespace PetaFF.Controllers
                 return NotFound();
             }
 
+            // Формируем список статусов из глобального enum
+            var statusList = Enum.GetValues(typeof(PetaFF.Models.PetStatus))
+                .Cast<PetaFF.Models.PetStatus>()
+                .Select(s => new SelectListItem
+                {
+                    Value = s.ToString(),
+                    Text = GetEnumDisplayName(s)
+                }).ToList();
+            ViewBag.StatusList = statusList;
+
             return View(petAd);
         }
 
         // POST: PetAd/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, PetAd petAd)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Type,Description,Status,Street,ContactPhone,UserId,PhotoPath")] PetAd petAd, IFormFile photo)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null)
@@ -211,12 +224,70 @@ namespace PetaFF.Controllers
                 return NotFound();
             }
 
+            // Формируем список статусов из глобального enum
+            var statusList = Enum.GetValues(typeof(PetaFF.Models.PetStatus))
+                .Cast<PetaFF.Models.PetStatus>()
+                .Select(s => new SelectListItem
+                {
+                    Value = s.ToString(),
+                    Text = GetEnumDisplayName(s)
+                }).ToList();
+            ViewBag.StatusList = statusList;
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(petAd);
+                    var existingPetAd = await _context.PetAds.FindAsync(id);
+                    if (existingPetAd == null)
+                    {
+                        return NotFound();
+                    }
+
+                    // Обновляем основные поля
+                    existingPetAd.Name = petAd.Name;
+                    existingPetAd.Type = petAd.Type;
+                    existingPetAd.Description = petAd.Description;
+                    existingPetAd.Status = petAd.Status;
+                    existingPetAd.Street = petAd.Street;
+                    existingPetAd.ContactPhone = petAd.ContactPhone;
+
+                    // Обрабатываем новое фото, если оно было загружено
+                    if (photo != null && photo.Length > 0)
+                    {
+                        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp" };
+                        var fileExtension = Path.GetExtension(photo.FileName).ToLowerInvariant();
+                        if (!allowedExtensions.Contains(fileExtension))
+                        {
+                            ModelState.AddModelError("PhotoPath", "Недопустимый формат файла. Разрешены только JPG, PNG, GIF и BMP.");
+                            petAd.PhotoPath = existingPetAd.PhotoPath; // показать текущее фото
+                            return View(petAd);
+                        }
+                        string fileName = $"{Guid.NewGuid()}{fileExtension}";
+                        string uploadsFolder = Path.Combine(_environment.WebRootPath, "uploads");
+                        if (!Directory.Exists(uploadsFolder))
+                        {
+                            Directory.CreateDirectory(uploadsFolder);
+                        }
+                        string filePath = Path.Combine(uploadsFolder, fileName);
+                        using (var fileStream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await photo.CopyToAsync(fileStream);
+                        }
+                        if (!string.IsNullOrEmpty(existingPetAd.PhotoPath))
+                        {
+                            var oldPhotoPath = Path.Combine(_environment.WebRootPath, existingPetAd.PhotoPath.TrimStart('/'));
+                            if (System.IO.File.Exists(oldPhotoPath))
+                            {
+                                System.IO.File.Delete(oldPhotoPath);
+                            }
+                        }
+                        existingPetAd.PhotoPath = $"/uploads/{fileName}";
+                    }
+
+                    _context.Update(existingPetAd);
                     await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -229,8 +300,22 @@ namespace PetaFF.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
+            // Если валидация не прошла, показываем текущее фото и обязательно передаём ViewBag.StatusList
+            var dbPetAd = await _context.PetAds.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+            if (dbPetAd != null && string.IsNullOrEmpty(petAd.PhotoPath))
+            {
+                petAd.PhotoPath = dbPetAd.PhotoPath;
+            }
+            // Повторно формируем список статусов для ViewBag
+            statusList = Enum.GetValues(typeof(PetaFF.Models.PetStatus))
+                .Cast<PetaFF.Models.PetStatus>()
+                .Select(s => new SelectListItem
+                {
+                    Value = s.ToString(),
+                    Text = GetEnumDisplayName(s)
+                }).ToList();
+            ViewBag.StatusList = statusList;
             return View(petAd);
         }
 
@@ -283,6 +368,14 @@ namespace PetaFF.Controllers
         private bool PetAdExists(int id)
         {
             return _context.PetAds.Any(e => e.Id == id);
+        }
+
+        // Вспомогательный метод для получения DisplayName из enum
+        private string GetEnumDisplayName(Enum value)
+        {
+            var field = value.GetType().GetField(value.ToString());
+            var attribute = field.GetCustomAttribute<DisplayAttribute>();
+            return attribute != null ? attribute.Name : value.ToString();
         }
     }
 } 

@@ -1,0 +1,81 @@
+@using Microsoft.AspNetCore.Mvc.Rendering
+@model PetaFF.Models.PetAd
+
+@{
+    ViewData["Title"] = "Редактировать объявление";
+}
+
+<div class="container mt-4">
+    <h2>Редактировать объявление</h2>
+    <hr />
+    <div class="row">
+        <div class="col-md-8">
+            <form asp-action="Edit" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="UserId" />
+                <input type="hidden" asp-for="PhotoPath" />
+
+                <div class="form-group mb-3">
+                    <label asp-for="Name" class="control-label">Имя питомца</label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Type" class="control-label">Тип питомца</label>
+                    <input asp-for="Type" class="form-control" />
+                    <span asp-validation-for="Type" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Description" class="control-label">Описание</label>
+                    <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Status" class="control-label">Статус</label>
+                    <select asp-for="Status" class="form-control" asp-items="ViewBag.StatusList"></select>
+                    <span asp-validation-for="Status" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Street" class="control-label">Улица</label>
+                    <input asp-for="Street" class="form-control" />
+                    <span asp-validation-for="Street" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="ContactPhone" class="control-label">Контактный телефон</label>
+                    <input asp-for="ContactPhone" class="form-control" />
+                    <span asp-validation-for="ContactPhone" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="control-label">Текущее фото</label>
+                    @if (!string.IsNullOrEmpty(Model.PhotoPath))
+                    {
+                        <div class="mt-2">
+                            <img src="@Model.PhotoPath" alt="Фото питомца" style="max-width: 200px;" />
+                        </div>
+                    }
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="control-label">Новое фото (необязательно)</label>
+                    <input type="file" name="photo" class="form-control" accept="image/*" />
+                </div>
+
+                <div class="form-group mt-4">
+                    <input type="submit" value="Сохранить" class="btn btn-primary" />
+                    <a asp-action="Index" class="btn btn-secondary">Вернуться к списку</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

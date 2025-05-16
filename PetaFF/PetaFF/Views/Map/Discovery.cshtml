@@ -1,0 +1,88 @@
+@model IEnumerable<dynamic>
+
+@{
+    ViewData["Title"] = "Карта обнаружения";
+}
+
+<div class="container mt-4">
+    <h2>Карта обнаружения</h2>
+    
+    <div class="row">
+        @foreach (var district in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">@district.Name</h5>
+                        <p class="card-text">
+                            Количество объявлений: <span class="badge bg-primary">@district.Count</span>
+                        </p>
+                        <button class="btn btn-primary view-ads" data-district="@district.Name">
+                            Показать объявления
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div id="adsModal" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Объявления в районе: <span id="districtName"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="adsList" class="row">
+                        <!-- Здесь будут отображаться объявления -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('.view-ads').click(function() {
+                const district = $(this).data('district');
+                $('#districtName').text(district);
+                
+                $.get('/Map/GetDistrictAds', { district: district }, function(ads) {
+                    const adsList = $('#adsList');
+                    adsList.empty();
+                    
+                    ads.forEach(function(ad) {
+                        const card = `
+                            <div class="col-md-6 mb-3">
+                                <div class="card h-100">
+                                    ${ad.photoPath ? `<img src="${ad.photoPath}" class="card-img-top" alt="${ad.name}" style="height: 200px; object-fit: cover;">` : ''}
+                                    <div class="card-body">
+                                        <h5 class="card-title">${ad.name}</h5>
+                                        <p class="card-text">
+                                            <strong>Тип:</strong> ${ad.type}<br>
+                                            <strong>Статус:</strong> ${ad.status}<br>
+                                            <strong>Дата:</strong> ${new Date(ad.dateLost).toLocaleDateString()}
+                                        </p>
+                                        <p class="card-text">${ad.description}</p>
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                Контакты: ${ad.contactPhone}
+                                            </small>
+                                        </p>
+                                        <a href="/PetAd/Details/${ad.id}" class="btn btn-primary">Подробнее</a>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        adsList.append(card);
+                    });
+                    
+                    $('#adsModal').modal('show');
+                });
+            });
+        });
+    </script>
+} 

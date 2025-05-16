@@ -41,6 +41,10 @@ namespace PetaFF.Models
         [Display(Name = "Адрес пользователя")]
         public string Address { get; set; }
 
+        [Required(ErrorMessage = "Пожалуйста, выберите район")]
+        [Display(Name = "Район")]
+        public string District { get; set; }
+
         [Display(Name = "Место, где видели в последний раз")]
         public string? LastSeenAddress { get; set; }
 

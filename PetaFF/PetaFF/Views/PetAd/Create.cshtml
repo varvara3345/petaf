@@ -40,6 +40,22 @@
         </div>
 
         <div class="form-group mb-3">
+            <label asp-for="District" class="control-label"></label>
+            <select asp-for="District" class="form-control" id="districtSelect" required>
+                <option value="">Выберите район</option>
+                <option value="Центральный">Центральный</option>
+                <option value="Фрунзенский">Фрунзенский</option>
+                <option value="Советский">Советский</option>
+                <option value="Ленинский">Ленинский</option>
+                <option value="Партизанский">Партизанский</option>
+                <option value="Заводской">Заводской</option>
+                <option value="Московский">Московский</option>
+                <option value="Октябрьский">Октябрьский</option>
+            </select>
+            <span asp-validation-for="District" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
             <label asp-for="Address" class="control-label">Адрес пользователя</label>
             <input asp-for="Address" class="form-control" required />
             <span asp-validation-for="Address" class="text-danger"></span>
@@ -47,36 +63,70 @@
 
         <div class="form-group mb-3">
             <label asp-for="LastSeenAddress" class="control-label">Место, где видели в последний раз</label>
-            <input asp-for="LastSeenAddress" class="form-control" />
+            <div class="row">
+                <div class="col-md-8">
+                    <select id="streetSelect" class="form-control" disabled>
+                        <option value="">Сначала выберите район</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <input type="text" id="houseNumber" class="form-control" placeholder="Номер дома" />
+                </div>
+            </div>
+            <input type="hidden" asp-for="LastSeenAddress" id="lastSeenAddress" />
             <span asp-validation-for="LastSeenAddress" class="text-danger"></span>
         </div>
 
         <div class="form-group mb-3">
-            <label class="control-label">Фото (необязательно)</label>
-            <input type="file" name="photo" class="form-control" accept=".jpg,.jpeg,.png,.gif,.bmp" />
-            <small class="form-text text-muted">Максимальный размер файла: 5MB. Поддерживаемые форматы: JPG, PNG, GIF, BMP</small>
+            <label class="control-label">Фото</label>
+            <input type="file" name="photo" class="form-control" accept="image/*" />
         </div>
 
         <div class="form-group">
-            <button type="submit" class="btn btn-primary">Опубликовать</button>
+            <input type="submit" value="Создать" class="btn btn-primary" />
             <a asp-action="Index" class="btn btn-secondary">Назад к списку</a>
         </div>
     </form>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/districts.js"></script>
     <script>
-        $(document).ready(function() {
-            $('input[type="file"]').on('change', function() {
-                var file = this.files[0];
-                if (file) {
-                    if (file.size > 5 * 1024 * 1024) { // 5MB
-                        alert('Размер файла не должен превышать 5MB');
-                        this.value = '';
-                    }
+        document.addEventListener('DOMContentLoaded', function() {
+            const districtSelect = document.getElementById('districtSelect');
+            const streetSelect = document.getElementById('streetSelect');
+            const houseNumber = document.getElementById('houseNumber');
+            const lastSeenAddress = document.getElementById('lastSeenAddress');
+
+            districtSelect.addEventListener('change', function() {
+                const selectedDistrict = this.value;
+                streetSelect.innerHTML = '<option value="">Выберите улицу</option>';
+                
+                if (selectedDistrict && districtStreets[selectedDistrict]) {
+                    streetSelect.disabled = false;
+                    districtStreets[selectedDistrict].forEach(street => {
+                        const option = document.createElement('option');
+                        option.value = street;
+                        option.textContent = street;
+                        streetSelect.appendChild(option);
+                    });
+                } else {
+                    streetSelect.disabled = true;
                 }
             });
+
+            function updateLastSeenAddress() {
+                const street = streetSelect.value;
+                const house = houseNumber.value;
+                if (street) {
+                    lastSeenAddress.value = `${street}${house ? ', д. ' + house : ''}`;
+                } else {
+                    lastSeenAddress.value = '';
+                }
+            }
+
+            streetSelect.addEventListener('change', updateLastSeenAddress);
+            houseNumber.addEventListener('input', updateLastSeenAddress);
         });
     </script>
 } 

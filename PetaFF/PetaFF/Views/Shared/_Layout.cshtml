@@ -35,7 +35,10 @@
                         @if (Context.Session.GetInt32("UserId") != null)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Map" asp-action="Index">Карта объявлений</a>
+                                <a class="nav-link text-dark" asp-controller="Map" asp-action="Index">Карта Минска</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Map" asp-action="Discovery">Карта обнаружения</a>
                             </li>
                             <li class="nav-item">
                                 <span class="nav-link text-dark">Привет, @Context.Session.GetString("Username")!</span>

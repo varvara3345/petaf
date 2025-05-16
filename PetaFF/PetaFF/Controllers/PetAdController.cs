@@ -133,7 +133,7 @@ namespace PetaFF.Controllers
         // POST: PetAd/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Type,Description,Status,Address,ContactPhone,DateLost,LastSeenAddress")] PetAd petAd, IFormFile photo)
+        public async Task<IActionResult> Create([Bind("Name,Type,Description,Status,Address,District,ContactPhone,DateLost,LastSeenAddress")] PetAd petAd, IFormFile photo)
         {
             try
             {
@@ -147,6 +147,7 @@ namespace PetaFF.Controllers
                     string.IsNullOrWhiteSpace(petAd.Type) ||
                     string.IsNullOrWhiteSpace(petAd.Description) ||
                     string.IsNullOrWhiteSpace(petAd.Address) ||
+                    string.IsNullOrWhiteSpace(petAd.District) ||
                     string.IsNullOrWhiteSpace(petAd.ContactPhone) ||
                     petAd.DateLost == null)
                 {
@@ -248,7 +249,7 @@ namespace PetaFF.Controllers
         // POST: PetAd/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Type,Description,Status,Address,ContactPhone,UserId,PhotoPath,DateLost,LastSeenAddress")] PetAd petAd, IFormFile photo)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Type,Description,Status,Address,District,ContactPhone,UserId,PhotoPath,DateLost,LastSeenAddress")] PetAd petAd, IFormFile photo)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null)
@@ -271,6 +272,7 @@ namespace PetaFF.Controllers
                 string.IsNullOrWhiteSpace(petAd.Type) ||
                 string.IsNullOrWhiteSpace(petAd.Description) ||
                 string.IsNullOrWhiteSpace(petAd.Address) ||
+                string.IsNullOrWhiteSpace(petAd.District) ||
                 string.IsNullOrWhiteSpace(petAd.ContactPhone) ||
                 petAd.DateLost == null)
             {
@@ -303,14 +305,16 @@ namespace PetaFF.Controllers
                     existingPetAd.Location = latitude.HasValue && longitude.HasValue ? $"{latitude},{longitude}" : null;
                 }
 
-                // Обновляем основные поля
+                // Обновляем все поля, включая район
                 existingPetAd.Name = petAd.Name;
                 existingPetAd.Type = petAd.Type;
                 existingPetAd.Description = petAd.Description;
                 existingPetAd.Status = petAd.Status;
                 existingPetAd.Address = petAd.Address;
+                existingPetAd.District = petAd.District;
                 existingPetAd.ContactPhone = petAd.ContactPhone;
                 existingPetAd.DateLost = petAd.DateLost;
+                existingPetAd.LastSeenAddress = petAd.LastSeenAddress;
 
                 // Обрабатываем новое фото, если оно было загружено
                 if (photo != null && photo.Length > 0)

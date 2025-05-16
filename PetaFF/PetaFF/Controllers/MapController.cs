@@ -36,6 +36,56 @@ namespace PetaFF.Controllers
             return View(petAds);
         }
 
+        public IActionResult Discovery()
+        {
+            var districts = new[]
+            {
+                "Центральный",
+                "Фрунзенский",
+                "Советский",
+                "Ленинский",
+                "Партизанский",
+                "Заводской",
+                "Московский",
+                "Октябрьский"
+            };
+
+            var districtStats = districts.Select(district => new
+            {
+                Name = district,
+                Count = _context.PetAds.Count(p => p.District == district)
+            }).ToList();
+
+            return View(districtStats);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetDistrictAds(string district)
+        {
+            if (string.IsNullOrEmpty(district))
+            {
+                return Json(new { error = "Район не указан" });
+            }
+
+            var ads = await _context.PetAds
+                .Where(p => p.District == district)
+                .Select(p => new
+                {
+                    p.Id,
+                    p.Name,
+                    p.Type,
+                    p.Description,
+                    p.PhotoPath,
+                    p.Status,
+                    p.LastSeenAddress,
+                    p.ContactPhone,
+                    p.DateLost
+                })
+                .ToListAsync();
+
+            return Json(ads);
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetMarkers()
         {

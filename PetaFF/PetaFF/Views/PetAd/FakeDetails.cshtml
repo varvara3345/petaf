@@ -48,7 +48,113 @@
                 <p>@Model.User?.Username</p>
             </div>
 
-            <a asp-action="OtherAds" class="btn btn-secondary">Назад к списку</a>
+            <div class="d-flex align-items-center mb-3">
+                <button id="likeBtn" class="btn btn-outline-danger me-2"><i class="bi bi-heart"></i> <span id="likeCount">0</span></button>
+                <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#chatModal"><i class="bi bi-chat-dots"></i> Связаться с автором</button>
+            </div>
+
+            <div class="comments-section mt-4">
+                <h4>Комментарии (<span id="commentsCount">0</span>)</h4>
+                <form id="commentForm" class="mb-3">
+                    <div class="form-group mb-2">
+                        <textarea id="commentText" class="form-control" rows="2" placeholder="Напишите комментарий..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Оставить комментарий</button>
+                </form>
+                <div id="commentsList"></div>
+            </div>
+
+            <a asp-action="OtherAds" class="btn btn-secondary mt-4">Назад к списку</a>
         </div>
     </div>
-</div> 
+</div>
+
+<!-- Модальное окно чата -->
+<div class="modal fade" id="chatModal" tabindex="-1" aria-labelledby="chatModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="chatModalLabel">Чат с автором объявления</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="chatMessages" style="max-height:200px; overflow-y:auto; margin-bottom:10px;"></div>
+        <form id="chatForm">
+          <div class="input-group">
+            <input type="text" id="chatInput" class="form-control" placeholder="Введите сообщение...">
+            <button class="btn btn-primary" type="submit">Отправить</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts {
+    <script>
+        // --- Лайки ---
+        const fakeAdKey = 'fakeAd_' + @Model.Name.GetHashCode();
+        function getLikeCount() {
+            return parseInt(localStorage.getItem(fakeAdKey + '_likes') || '0');
+        }
+        function setLikeCount(val) {
+            localStorage.setItem(fakeAdKey + '_likes', val);
+            $('#likeCount').text(val);
+        }
+        $('#likeBtn').on('click', function() {
+            let count = getLikeCount();
+            count++;
+            setLikeCount(count);
+            $(this).addClass('btn-danger').removeClass('btn-outline-danger');
+        });
+        setLikeCount(getLikeCount());
+
+        // --- Комментарии ---
+        function getComments() {
+            return JSON.parse(localStorage.getItem(fakeAdKey + '_comments') || '[]');
+        }
+        function setComments(comments) {
+            localStorage.setItem(fakeAdKey + '_comments', JSON.stringify(comments));
+            $('#commentsCount').text(comments.length);
+            const list = $('#commentsList');
+            list.empty();
+            comments.slice().reverse().forEach(function(c) {
+                list.append(`<div class="card mb-2"><div class="card-body"><p class="mb-1">${c.text}</p><small class="text-muted">${c.date}</small></div></div>`);
+            });
+        }
+        setComments(getComments());
+        $('#commentForm').on('submit', function(e) {
+            e.preventDefault();
+            const text = $('#commentText').val().trim();
+            if (!text) return;
+            const comments = getComments();
+            comments.push({ text, date: new Date().toLocaleString() });
+            setComments(comments);
+            $('#commentText').val('');
+        });
+
+        // --- Чат ---
+        function getChat() {
+            return JSON.parse(localStorage.getItem(fakeAdKey + '_chat') || '[]');
+        }
+        function setChat(chat) {
+            localStorage.setItem(fakeAdKey + '_chat', JSON.stringify(chat));
+            const chatBox = $('#chatMessages');
+            chatBox.empty();
+            chat.forEach(function(msg) {
+                chatBox.append(`<div><b>Вы:</b> ${msg.text} <span class="text-muted" style="font-size:0.9em;">${msg.date}</span></div>`);
+            });
+            chatBox.scrollTop(chatBox[0].scrollHeight);
+        }
+        setChat(getChat());
+        $('#chatForm').on('submit', function(e) {
+            e.preventDefault();
+            const text = $('#chatInput').val().trim();
+            if (!text) return;
+            const chat = getChat();
+            chat.push({ text, date: new Date().toLocaleString() });
+            setChat(chat);
+            $('#chatInput').val('');
+        });
+    </script>
+} 

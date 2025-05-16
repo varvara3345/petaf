@@ -1,0 +1,54 @@
+@model PetaFF.Models.PetAd
+@using PetaFF.Extensions
+@{
+    ViewData["Title"] = "Детали объявления (пример)";
+}
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-body">
+            <h2 class="card-title">@Model.Name</h2>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="badge bg-primary">@Model.Type</span>
+                <span class="badge bg-info">@Model.Status.GetDisplayName()</span>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.PhotoPath))
+            {
+                <img src="@Model.PhotoPath" class="img-fluid rounded mb-3" alt="Фото животного" style="max-height: 400px;">
+            }
+
+            <div class="mb-3">
+                <h5>Описание:</h5>
+                <p>@Model.Description</p>
+            </div>
+
+            <div class="mb-3">
+                <h5>Адрес пользователя:</h5>
+                <p>@Model.Address</p>
+            </div>
+
+            <div class="mb-3">
+                <h5>Район:</h5>
+                <p>@Model.District</p>
+            </div>
+
+            <div class="mb-3">
+                <h5>Контактный телефон:</h5>
+                <p>@Model.ContactPhone</p>
+            </div>
+
+            <div class="mb-3">
+                <h5>Дата пропажи:</h5>
+                <p>@Model.DateLost?.ToString("dd.MM.yyyy")</p>
+            </div>
+
+            <div class="mb-3">
+                <h5>Автор объявления:</h5>
+                <p>@Model.User?.Username</p>
+            </div>
+
+            <a asp-action="OtherAds" class="btn btn-secondary">Назад к списку</a>
+        </div>
+    </div>
+</div> 

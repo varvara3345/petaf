@@ -13,6 +13,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using System.Net.Http;
 using Newtonsoft.Json.Linq;
+using System.Globalization;
 
 namespace PetaFF.Controllers
 {
@@ -453,6 +454,34 @@ namespace PetaFF.Controllers
             var field = value.GetType().GetField(value.ToString());
             var attribute = field.GetCustomAttribute<DisplayAttribute>();
             return attribute != null ? attribute.Name : value.ToString();
+        }
+
+        // ДЕТАЛИ ФЕЙКОВОГО ОБЪЯВЛЕНИЯ
+        public IActionResult FakeDetails(int id)
+        {
+            // Список фейковых объявлений (тот же, что и в OtherAds.cshtml)
+            var fakeAds = new List<PetAd>
+            {
+                new PetAd { Name = "Барсик", Type = "Кот", Description = "Серый пушистый кот, пропал возле ул. Немига. Без ошейника.", DateLost = DateTime.ParseExact("10.05.2025", "dd.MM.yyyy", CultureInfo.InvariantCulture), ContactPhone = "+375291234567", Status = PetStatus.InSearch, Address = "ул. Немига", District = "Центральный", User = new User { Username = "Анна" }, PhotoPath = "https://images.pexels.com/photos/1276553/pexels-photo-1276553.jpeg" },
+                new PetAd { Name = "Белла", Type = "Собака", Description = "Лабрадор, светлая, дружелюбная. Убежала возле Логойского тракта.", DateLost = DateTime.ParseExact("29.04.2025", "dd.MM.yyyy", CultureInfo.InvariantCulture), ContactPhone = "+375296543210", Status = PetStatus.InSearch, Address = "Логойский тракт", District = "Советский", User = new User { Username = "Иван" }, PhotoPath = "https://images.pexels.com/photos/8700/pexels-photo.jpg" },
+                new PetAd { Name = "Мурка", Type = "Кошка", Description = "Черная с белыми лапками, исчезла в районе пл. Победы.", DateLost = DateTime.ParseExact("01.05.2025", "dd.MM.yyyy", CultureInfo.InvariantCulture), ContactPhone = "+375447891234", Status = PetStatus.InSearch, Address = "пл. Победы", District = "Ленинский", User = new User { Username = "Мария" }, PhotoPath = "https://images.pexels.com/photos/208984/pexels-photo-208984.jpeg" },
+                new PetAd { Name = "Рекс", Type = "Собака", Description = "Овчарка, откликается на кличку. Потерян на Кальварийской.", DateLost = DateTime.ParseExact("15.04.2025", "dd.MM.yyyy", CultureInfo.InvariantCulture), ContactPhone = "+375333456789", Status = PetStatus.InSearch, Address = "ул. Кальварийская", District = "Фрунзенский", User = new User { Username = "Павел" }, PhotoPath = "https://images.pexels.com/photos/4587991/pexels-photo-4587991.jpeg" },
+                new PetAd { Name = "Снежок", Type = "Кролик", Description = "Белый декоративный кролик, пропал с двора на ул. Ангарской.", DateLost = DateTime.ParseExact("05.05.2025", "dd.MM.yyyy", CultureInfo.InvariantCulture), ContactPhone = "+375297654321", Status = PetStatus.InSearch, Address = "ул. Ангарская", District = "Заводской", User = new User { Username = "Ольга" }, PhotoPath = "https://images.pexels.com/photos/326012/pexels-photo-326012.jpeg" },
+                new PetAd { Name = "Том", Type = "Кот", Description = "Рыжий, крупный, ушёл с ул. Восточной.", DateLost = DateTime.ParseExact("22.03.2025", "dd.MM.yyyy", CultureInfo.InvariantCulture), ContactPhone = "+375291111222", Status = PetStatus.InSearch, Address = "ул. Восточная", District = "Партизанский", User = new User { Username = "Артём" }, PhotoPath = "https://images.pexels.com/photos/1170986/pexels-photo-1170986.jpeg" },
+                new PetAd { Name = "Лаки", Type = "Собака", Description = "Йоркширский терьер, исчез возле Орловской.", DateLost = DateTime.ParseExact("03.05.2025", "dd.MM.yyyy", CultureInfo.InvariantCulture), ContactPhone = "+375295551234", Status = PetStatus.InSearch, Address = "ул. Орловская", District = "Октябрьский", User = new User { Username = "Елена" }, PhotoPath = "https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg" },
+                new PetAd { Name = "Дымка", Type = "Кошка", Description = "Серая, пушистая, боится людей. Потеряна в районе Бехтерева.", DateLost = DateTime.ParseExact("18.04.2025", "dd.MM.yyyy", CultureInfo.InvariantCulture), ContactPhone = "+375445671234", Status = PetStatus.InSearch, Address = "ул. Бехтерева", District = "Московский", User = new User { Username = "Дмитрий" }, PhotoPath = "https://images.pexels.com/photos/1276553/pexels-photo-1276553.jpeg" },
+                new PetAd { Name = "Чарли", Type = "Попугай", Description = "Зелёный волнистый попугай, умеет говорить. Вылетел в районе Брилевской.", DateLost = DateTime.ParseExact("09.05.2025", "dd.MM.yyyy", CultureInfo.InvariantCulture), ContactPhone = "+375298765432", Status = PetStatus.InSearch, Address = "ул. Брилевская", District = "Ленинский", User = new User { Username = "Светлана" }, PhotoPath = "https://images.pexels.com/photos/45911/peacock-bird-plumage-color-45911.jpeg" },
+                new PetAd { Name = "Грей", Type = "Собака", Description = "Хаски, голубые глаза. Пропал на Городском Вале.", DateLost = DateTime.ParseExact("07.05.2025", "dd.MM.yyyy", CultureInfo.InvariantCulture), ContactPhone = "+375292345678", Status = PetStatus.InSearch, Address = "Городской Вал", District = "Центральный", User = new User { Username = "Алексей" }, PhotoPath = "https://images.pexels.com/photos/356378/pexels-photo-356378.jpeg" },
+                new PetAd { Name = "Луна", Type = "Кошка", Description = "Трехцветная, домашняя. Убежала из квартиры на Сурганова.", DateLost = DateTime.ParseExact("30.04.2025", "dd.MM.yyyy", CultureInfo.InvariantCulture), ContactPhone = "+375291234888", Status = PetStatus.InSearch, Address = "ул. Сурганова", District = "Советский", User = new User { Username = "Виктория" }, PhotoPath = "https://images.pexels.com/photos/45201/kitty-cat-kitten-pet-45201.jpeg" },
+                new PetAd { Name = "Шарик", Type = "Собака", Description = "Местный песик, сбежал из двора в Каменной Горке.", DateLost = DateTime.ParseExact("01.05.2025", "dd.MM.yyyy", CultureInfo.InvariantCulture), ContactPhone = "+375299998877", Status = PetStatus.InSearch, Address = "Каменная Горка", District = "Фрунзенский", User = new User { Username = "Сергей" }, PhotoPath = "https://images.pexels.com/photos/4587991/pexels-photo-4587991.jpeg" },
+                new PetAd { Name = "Кнопа", Type = "Кошка", Description = "Маленькая чёрная кошечка, исчезла на Слепянке.", DateLost = DateTime.ParseExact("27.04.2025", "dd.MM.yyyy", CultureInfo.InvariantCulture), ContactPhone = "+375293332211", Status = PetStatus.InSearch, Address = "Слепянка", District = "Партизанский", User = new User { Username = "Наталья" }, PhotoPath = "https://images.pexels.com/photos/208984/pexels-photo-208984.jpeg" },
+                new PetAd { Name = "Ричи", Type = "Собака", Description = "Французский бульдог, последний раз видели возле Маяковского.", DateLost = DateTime.ParseExact("04.05.2025", "dd.MM.yyyy", CultureInfo.InvariantCulture), ContactPhone = "+375291239999", Status = PetStatus.InSearch, Address = "ул. Маяковского", District = "Заводской", User = new User { Username = "Андрей" }, PhotoPath = "https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg" },
+                new PetAd { Name = "Жужа", Type = "Кошка", Description = "Бежево-серая, потеряна возле Зеленого Луга.", DateLost = DateTime.ParseExact("08.05.2025", "dd.MM.yyyy", CultureInfo.InvariantCulture), ContactPhone = "+375292223344", Status = PetStatus.InSearch, Address = "Зеленый Луг", District = "Советский", User = new User { Username = "Татьяна" }, PhotoPath = "https://images.pexels.com/photos/45201/kitty-cat-kitten-pet-45201.jpeg" },
+            };
+            if (id < 1 || id > fakeAds.Count)
+                return NotFound();
+            var ad = fakeAds[id - 1];
+            return View(ad);
         }
     }
 } 

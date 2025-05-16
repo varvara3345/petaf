@@ -55,6 +55,12 @@
                     adsList.empty();
                     
                     ads.forEach(function(ad) {
+                        let detailsBtn = '';
+                        if (ad.isFake && ad.fakeIndex) {
+                            detailsBtn = `<a href="/PetAd/FakeDetails/${ad.fakeIndex}" class="btn btn-primary">Подробнее</a>`;
+                        } else {
+                            detailsBtn = `<a href="/PetAd/Details/${ad.id}" class="btn btn-primary">Подробнее</a>`;
+                        }
                         const card = `
                             <div class="col-md-6 mb-3">
                                 <div class="card h-100">
@@ -72,7 +78,7 @@
                                                 Контакты: ${ad.contactPhone}
                                             </small>
                                         </p>
-                                        <a href="/PetAd/Details/${ad.id}" class="btn btn-primary">Подробнее</a>
+                                        ${detailsBtn}
                                     </div>
                                 </div>
                             </div>

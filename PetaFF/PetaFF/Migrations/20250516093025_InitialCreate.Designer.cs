@@ -12,8 +12,8 @@ using PetaFF.Data;
 namespace PetaFF.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250516083708_AddFakePetAds")]
-    partial class AddFakePetAds
+    [Migration("20250516093025_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -170,6 +170,9 @@ namespace PetaFF.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .IsRequired()

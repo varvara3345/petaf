@@ -34,9 +34,11 @@ namespace PetaFF.Models
         [Required]
         public string PhoneNumber { get; set; }
 
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+
         // Навигационные свойства
-        public ICollection<PetAd> PetAds { get; set; } = new List<PetAd>();
-        public ICollection<Comment> Comments { get; set; } = new List<Comment>();
-        public ICollection<Like> Likes { get; set; } = new List<Like>();
+        public ICollection<PetAd> PetAds { get; set; }
+        public ICollection<Comment> Comments { get; set; }
+        public ICollection<Like> Likes { get; set; }
     }
 } 

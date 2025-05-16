@@ -92,6 +92,7 @@ namespace PetaFF.Controllers
                 .Include(p => p.User)
                 .Include(p => p.Comments)
                 .Include(p => p.Likes)
+                .OrderByDescending(p => p.CreatedAt)
                 .ToListAsync();
 
             return View(petAds);

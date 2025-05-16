@@ -34,6 +34,37 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <!-- Фильтры -->
+                    <form id="adsFilters" class="row g-2 mb-3">
+                        <div class="col-md-3">
+                            <select id="filterType" class="form-select">
+                                <option value="">Все типы</option>
+                                <option value="Кот">Кот</option>
+                                <option value="Кошка">Кошка</option>
+                                <option value="Собака">Собака</option>
+                                <option value="Кролик">Кролик</option>
+                                <option value="Попугай">Попугай</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select id="filterStatus" class="form-select">
+                                <option value="">Все статусы</option>
+                                <option value="В поиске">В поиске</option>
+                                <option value="Найден">Найден</option>
+                                <option value="В приюте">В приюте</option>
+                                <option value="Временный приют">Временный приют</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select id="sortDate" class="form-select">
+                                <option value="desc">Дата пропажи ↓</option>
+                                <option value="asc">Дата пропажи ↑</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" id="searchName" class="form-control" placeholder="Поиск по имени...">
+                        </div>
+                    </form>
                     <div id="adsList" class="row">
                         <!-- Здесь будут отображаться объявления -->
                     </div>
@@ -45,50 +76,72 @@
 
 @section Scripts {
     <script>
+        let allAds = [];
+        function renderAds(filteredAds) {
+            const adsList = $('#adsList');
+            adsList.empty();
+            filteredAds.forEach(function(ad) {
+                let detailsBtn = '';
+                if (ad.isFake && ad.fakeIndex) {
+                    detailsBtn = `<a href="/PetAd/FakeDetails/${ad.fakeIndex}" class="btn btn-primary">Подробнее</a>`;
+                } else {
+                    detailsBtn = `<a href="/PetAd/Details/${ad.id}" class="btn btn-primary">Подробнее</a>`;
+                }
+                const card = `
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100">
+                            ${ad.photoPath ? `<img src="${ad.photoPath}" class="card-img-top" alt="${ad.name}" style="height: 200px; object-fit: cover;">` : ''}
+                            <div class="card-body">
+                                <h5 class="card-title">${ad.name}</h5>
+                                <p class="card-text">
+                                    <strong>Тип:</strong> ${ad.type}<br>
+                                    <strong>Статус:</strong> ${ad.status}<br>
+                                    <strong>Дата:</strong> ${new Date(ad.dateLost).toLocaleDateString()}
+                                </p>
+                                <p class="card-text">${ad.description}</p>
+                                <p class="card-text">
+                                    <small class="text-muted">
+                                        Контакты: ${ad.contactPhone}
+                                    </small>
+                                </p>
+                                ${detailsBtn}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                adsList.append(card);
+            });
+        }
+
+        function filterAndRenderAds() {
+            let filtered = allAds.slice();
+            const type = $('#filterType').val();
+            const status = $('#filterStatus').val();
+            const sortDate = $('#sortDate').val();
+            const searchName = $('#searchName').val().toLowerCase();
+            if (type) filtered = filtered.filter(ad => ad.type === type);
+            if (status) filtered = filtered.filter(ad => ad.status === status);
+            if (searchName) filtered = filtered.filter(ad => ad.name && ad.name.toLowerCase().includes(searchName));
+            filtered.sort((a, b) => {
+                const da = new Date(a.dateLost);
+                const db = new Date(b.dateLost);
+                return sortDate === 'asc' ? da - db : db - da;
+            });
+            renderAds(filtered);
+        }
+
         $(document).ready(function() {
             $('.view-ads').click(function() {
                 const district = $(this).data('district');
                 $('#districtName').text(district);
-                
                 $.get('/Map/GetDistrictAds', { district: district }, function(ads) {
-                    const adsList = $('#adsList');
-                    adsList.empty();
-                    
-                    ads.forEach(function(ad) {
-                        let detailsBtn = '';
-                        if (ad.isFake && ad.fakeIndex) {
-                            detailsBtn = `<a href="/PetAd/FakeDetails/${ad.fakeIndex}" class="btn btn-primary">Подробнее</a>`;
-                        } else {
-                            detailsBtn = `<a href="/PetAd/Details/${ad.id}" class="btn btn-primary">Подробнее</a>`;
-                        }
-                        const card = `
-                            <div class="col-md-6 mb-3">
-                                <div class="card h-100">
-                                    ${ad.photoPath ? `<img src="${ad.photoPath}" class="card-img-top" alt="${ad.name}" style="height: 200px; object-fit: cover;">` : ''}
-                                    <div class="card-body">
-                                        <h5 class="card-title">${ad.name}</h5>
-                                        <p class="card-text">
-                                            <strong>Тип:</strong> ${ad.type}<br>
-                                            <strong>Статус:</strong> ${ad.status}<br>
-                                            <strong>Дата:</strong> ${new Date(ad.dateLost).toLocaleDateString()}
-                                        </p>
-                                        <p class="card-text">${ad.description}</p>
-                                        <p class="card-text">
-                                            <small class="text-muted">
-                                                Контакты: ${ad.contactPhone}
-                                            </small>
-                                        </p>
-                                        ${detailsBtn}
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                        adsList.append(card);
-                    });
-                    
+                    allAds = ads;
+                    filterAndRenderAds();
                     $('#adsModal').modal('show');
                 });
             });
+            $('#filterType, #filterStatus, #sortDate').on('change', filterAndRenderAds);
+            $('#searchName').on('input', filterAndRenderAds);
         });
     </script>
 } 

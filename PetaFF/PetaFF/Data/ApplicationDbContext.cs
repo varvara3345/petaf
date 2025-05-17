@@ -14,6 +14,7 @@ namespace PetaFF.Data
         public DbSet<PetAd> PetAds { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Like> Likes { get; set; }
+        public DbSet<Favorite> Favorites { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -29,6 +30,10 @@ namespace PetaFF.Data
 
             modelBuilder.Entity<Like>()
                 .HasIndex(l => new { l.PetAdId, l.UserId })
+                .IsUnique();
+
+            modelBuilder.Entity<Favorite>()
+                .HasIndex(f => new { f.PetAdId, f.UserId })
                 .IsUnique();
 
             // Настройка связей для избежания циклических зависимостей
@@ -61,6 +66,18 @@ namespace PetaFF.Data
                 .WithMany()
                 .HasForeignKey(l => l.UserId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Favorite>()
+                .HasOne(f => f.PetAd)
+                .WithMany(p => p.Favorites)
+                .HasForeignKey(f => f.PetAdId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Favorite>()
+                .HasOne(f => f.User)
+                .WithMany(u => u.Favorites)
+                .HasForeignKey(f => f.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 } 

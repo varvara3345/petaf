@@ -1,0 +1,60 @@
+@model IEnumerable<PetaFF.Models.Favorite>
+
+@{
+    ViewData["Title"] = "Избранные объявления";
+}
+
+<div class="container mt-4">
+    <h2>Избранные объявления</h2>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="row">
+            @foreach (var favorite in Model)
+            {
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        @if (!string.IsNullOrEmpty(favorite.PetAd.PhotoPath))
+                        {
+                            <img src="@favorite.PetAd.PhotoPath" class="card-img-top" alt="@favorite.PetAd.Name" style="height: 200px; object-fit: cover;">
+                        }
+                        <div class="card-body">
+                            <h5 class="card-title">@favorite.PetAd.Name - @favorite.PetAd.Type</h5>
+                            <p class="card-text">@favorite.PetAd.Description</p>
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    Район: @favorite.PetAd.District<br>
+                                    Статус: @favorite.PetAd.Status<br>
+                                    Автор: @favorite.PetAd.User.Username<br>
+                                    Дата добавления в избранное: @favorite.CreatedAt.ToString("dd.MM.yyyy")
+                                </small>
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <a href="@Url.Action("Details", "PetAd", new { id = favorite.PetAd.Id })" class="btn btn-primary">Подробнее</a>
+                                <div>
+                                    <span class="text-muted me-2">
+                                        <i class="fas fa-heart"></i> @(favorite.PetAd.Likes?.Count ?? 0)
+                                    </span>
+                                    <span class="text-muted me-2">
+                                        <i class="fas fa-comment"></i> @(favorite.PetAd.Comments?.Count ?? 0)
+                                    </span>
+                                    <form asp-action="ToggleFavorite" asp-route-petAdId="@favorite.PetAd.Id" method="post" style="display: inline;">
+                                        <button type="submit" class="btn btn-outline-danger">
+                                            <i class="fas fa-star"></i> Удалить из избранного
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            У вас пока нет избранных объявлений. Вы можете добавлять объявления в избранное, нажимая на кнопку "Добавить в избранное" на странице объявления.
+        </div>
+    }
+</div> 

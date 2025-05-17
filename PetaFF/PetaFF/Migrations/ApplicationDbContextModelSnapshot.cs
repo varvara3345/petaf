@@ -57,6 +57,33 @@ namespace PetaFF.Migrations
                     b.ToTable("Comments");
                 });
 
+            modelBuilder.Entity("PetaFF.Models.Favorite", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PetAdId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("PetAdId", "UserId")
+                        .IsUnique();
+
+                    b.ToTable("Favorites");
+                });
+
             modelBuilder.Entity("PetaFF.Models.Like", b =>
                 {
                     b.Property<int>("Id")
@@ -168,6 +195,9 @@ namespace PetaFF.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("AvatarPath")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -231,6 +261,25 @@ namespace PetaFF.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("PetaFF.Models.Favorite", b =>
+                {
+                    b.HasOne("PetaFF.Models.PetAd", "PetAd")
+                        .WithMany("Favorites")
+                        .HasForeignKey("PetAdId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PetaFF.Models.User", "User")
+                        .WithMany("Favorites")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PetAd");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("PetaFF.Models.Like", b =>
                 {
                     b.HasOne("PetaFF.Models.PetAd", "PetAd")
@@ -273,12 +322,16 @@ namespace PetaFF.Migrations
                 {
                     b.Navigation("Comments");
 
+                    b.Navigation("Favorites");
+
                     b.Navigation("Likes");
                 });
 
             modelBuilder.Entity("PetaFF.Models.User", b =>
                 {
                     b.Navigation("Comments");
+
+                    b.Navigation("Favorites");
 
                     b.Navigation("Likes");
 

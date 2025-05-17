@@ -32,7 +32,12 @@ namespace PetaFF.Models
         public string LastName { get; set; }
 
         [Required]
+        [Phone(ErrorMessage = "Некорректный формат телефона")]
+        [Display(Name = "Номер телефона")]
         public string PhoneNumber { get; set; }
+
+        [Display(Name = "Аватар")]
+        public string? AvatarPath { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
@@ -40,5 +45,6 @@ namespace PetaFF.Models
         public ICollection<PetAd> PetAds { get; set; }
         public ICollection<Comment> Comments { get; set; }
         public ICollection<Like> Likes { get; set; }
+        public ICollection<Favorite> Favorites { get; set; }
     }
 } 

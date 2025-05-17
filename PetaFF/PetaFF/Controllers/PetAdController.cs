@@ -112,6 +112,7 @@ namespace PetaFF.Controllers
                 .Include(p => p.Comments)
                     .ThenInclude(c => c.User)
                 .Include(p => p.Likes)
+                .Include(p => p.Favorites)
                 .FirstOrDefaultAsync(p => p.Id == id);
 
             if (petAd == null)

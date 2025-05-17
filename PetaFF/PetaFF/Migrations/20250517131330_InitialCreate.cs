@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace PetaFF.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateInitialTables : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -23,6 +23,7 @@ namespace PetaFF.Migrations
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AvatarPath = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -102,6 +103,33 @@ namespace PetaFF.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Favorites",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    PetAdId = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Favorites", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Favorites_PetAds_PetAdId",
+                        column: x => x.PetAdId,
+                        principalTable: "PetAds",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Favorites_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Likes",
                 columns: table => new
                 {
@@ -149,6 +177,17 @@ namespace PetaFF.Migrations
                 column: "UserId1");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Favorites_PetAdId_UserId",
+                table: "Favorites",
+                columns: new[] { "PetAdId", "UserId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Favorites_UserId",
+                table: "Favorites",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Likes_PetAdId_UserId",
                 table: "Likes",
                 columns: new[] { "PetAdId", "UserId" },
@@ -192,6 +231,9 @@ namespace PetaFF.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Comments");
+
+            migrationBuilder.DropTable(
+                name: "Favorites");
 
             migrationBuilder.DropTable(
                 name: "Likes");

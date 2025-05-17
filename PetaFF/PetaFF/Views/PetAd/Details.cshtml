@@ -5,6 +5,7 @@
     var userId = Context.Session.GetInt32("UserId");
     bool isOwner = userId != null && userId == Model.UserId;
     bool hasLiked = Model.Likes != null && userId != null && Model.Likes.Any(l => l.UserId == userId);
+    bool isFavorite = Model.Favorites != null && userId != null && Model.Favorites.Any(f => f.UserId == userId);
 }
 
 <div class="container mt-4">
@@ -49,6 +50,13 @@
                             <input type="hidden" name="petAdId" value="@Model.Id" />
                             <button type="submit" class="btn @(hasLiked ? "btn-primary" : "btn-outline-primary")">
                                 <i class="fas fa-heart"></i> @(hasLiked ? "Убрать лайк" : "Лайк") (@(Model.Likes?.Count ?? 0))
+                            </button>
+                        </form>
+
+                        <form asp-controller="Favorite" asp-action="ToggleFavorite" method="post" class="d-inline ms-2">
+                            <input type="hidden" name="petAdId" value="@Model.Id" />
+                            <button type="submit" class="btn @(isFavorite ? "btn-danger" : "btn-outline-danger")">
+                                <i class="fas fa-star"></i> @(isFavorite ? "Убрать из избранного" : "Добавить в избранное")
                             </button>
                         </form>
                     }

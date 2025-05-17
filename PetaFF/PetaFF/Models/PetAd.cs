@@ -58,6 +58,7 @@ namespace PetaFF.Models
 
         public ICollection<Comment> Comments { get; set; }
         public ICollection<Like> Likes { get; set; }
+        public ICollection<Favorite> Favorites { get; set; }
 
         public string? Location { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;

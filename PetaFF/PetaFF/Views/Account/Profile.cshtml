@@ -1,0 +1,113 @@
+@model PetaFF.Models.User
+
+@{
+    ViewData["Title"] = "Личный кабинет";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    @if (!string.IsNullOrEmpty(Model.AvatarPath))
+                    {
+                        <img src="@Model.AvatarPath" alt="Аватар" class="rounded-circle img-fluid mb-3" style="max-width: 200px; max-height: 200px;" />
+                    }
+                    else
+                    {
+                        <img src="/images/default-avatar.png" alt="Аватар по умолчанию" class="rounded-circle img-fluid mb-3" style="max-width: 200px; max-height: 200px;" />
+                    }
+                    <h4>@Model.FirstName @Model.LastName</h4>
+                    <p class="text-muted">@Model.Username</p>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h5 class="card-title">Контактная информация</h5>
+                    <p><i class="fas fa-envelope"></i> Email: @Model.Email</p>
+                    <p><i class="fas fa-phone"></i> Телефон: @Model.PhoneNumber</p>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h5 class="card-title">Редактировать профиль</h5>
+                    <form asp-action="UpdateProfile" method="post" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="firstName" class="form-label">Имя</label>
+                            <input type="text" class="form-control" id="firstName" name="firstName" value="@Model.FirstName">
+                        </div>
+                        <div class="mb-3">
+                            <label for="lastName" class="form-label">Фамилия</label>
+                            <input type="text" class="form-control" id="lastName" name="lastName" value="@Model.LastName">
+                        </div>
+                        <div class="mb-3">
+                            <label for="phoneNumber" class="form-label">Телефон</label>
+                            <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" value="@Model.PhoneNumber">
+                        </div>
+                        <div class="mb-3">
+                            <label for="avatar" class="form-label">Аватар</label>
+                            <input type="file" class="form-control" id="avatar" name="avatar" accept="image/*">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Мои объявления</h5>
+                    @if (Model.PetAds != null && Model.PetAds.Any())
+                    {
+                        <div class="list-group">
+                            @foreach (var ad in Model.PetAds)
+                            {
+                                <a href="@Url.Action("Details", "PetAd", new { id = ad.Id })" class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">@ad.Name - @ad.Type</h6>
+                                        <small>@ad.CreatedAt.ToString("dd.MM.yyyy")</small>
+                                    </div>
+                                    <p class="mb-1">@ad.Description</p>
+                                    <small>Статус: @ad.Status</small>
+                                </a>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">У вас пока нет объявлений</p>
+                    }
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h5 class="card-title">Избранные объявления</h5>
+                    @if (Model.Favorites != null && Model.Favorites.Any())
+                    {
+                        <div class="list-group">
+                            @foreach (var favorite in Model.Favorites)
+                            {
+                                <a href="@Url.Action("Details", "PetAd", new { id = favorite.PetAd.Id })" class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">@favorite.PetAd.Name - @favorite.PetAd.Type</h6>
+                                        <small>@favorite.CreatedAt.ToString("dd.MM.yyyy")</small>
+                                    </div>
+                                    <p class="mb-1">@favorite.PetAd.Description</p>
+                                    <small>Район: @favorite.PetAd.District</small>
+                                </a>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">У вас пока нет избранных объявлений</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

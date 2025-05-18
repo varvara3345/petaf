@@ -1,0 +1,106 @@
+@{
+    ViewData["Title"] = "Статьи и советы";
+}
+<style>
+    .article-section {
+        background: #f8fafc;
+        border-radius: 16px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        padding: 32px 24px 24px 24px;
+        margin-bottom: 32px;
+        border-left: 6px solid #4e73df;
+    }
+    .article-section h4 {
+        color: #4e73df;
+        font-weight: bold;
+        margin-bottom: 18px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .article-section ul, .article-section ol {
+        margin-left: 18px;
+        font-size: 1.08em;
+        color: #222;
+    }
+    .article-section li {
+        margin-bottom: 8px;
+        color: #222;
+    }
+    .article-section .icon {
+        font-size: 1.2em;
+        color: #4e73df;
+    }
+    .article-section p {
+        font-size: 1.08em;
+        color: #222;
+    }
+    .article-section strong, .article-section b {
+        color: #2e2e2e;
+    }
+    h2.articles-title {
+        color: #2a4cff;
+        font-weight: 900;
+        font-size: 2.5rem;
+        text-shadow: 0 2px 8px #bfcaff, 0 1px 0 #fff;
+        letter-spacing: 1px;
+        margin-bottom: 36px;
+    }
+</style>
+<div class="container mt-4 mb-5">
+    <h2 class="articles-title">Статьи и советы</h2>
+    <div class="article-section">
+        <h4><span class="icon"><i class="fas fa-search"></i></span> Как искать потерявшегося питомца — советы и пошаговая инструкция</h4>
+        <ol>
+            <li><b>Сохраняйте спокойствие.</b> Не паникуйте, действуйте быстро и обдуманно.</li>
+            <li><b>Проверьте дом и ближайшие укрытия.</b> Осмотрите подъезды, подвалы, чердаки, гаражи, кусты.</li>
+            <li><b>Поспрашивайте соседей и прохожих.</b> Покажите фото питомца, оставьте контакты.</li>
+            <li><b>Разместите объявления.</b> Используйте сайты, соцсети, распечатайте листовки с фото и контактами.</li>
+            <li><b>Обратитесь в приюты и ветклиники.</b> Оставьте информацию о пропаже.</li>
+            <li><b>Проверьте камеры видеонаблюдения.</b> Если есть доступ — посмотрите записи.</li>
+        </ol>
+    </div>
+    <div class="article-section">
+        <h4><span class="icon"><i class="fas fa-paw"></i></span> Что делать, если вы нашли чужого животного</h4>
+        <ul>
+            <li>Проверьте, нет ли у животного адресника или чипа (ветклиника поможет считать чип).</li>
+            <li>Сфотографируйте животное и разместите объявление о находке в интернете и на улицах.</li>
+            <li>Сообщите о находке в приюты, ветклиники, местные группы в соцсетях.</li>
+            <li>Постарайтесь временно обеспечить безопасность животного (еда, вода, укрытие).</li>
+        </ul>
+    </div>
+    <div class="article-section">
+        <h4><span class="icon"><i class="fas fa-address-book"></i></span> Контакты организаций</h4>
+        <ul>
+            <li><b>Полиция:</b> 102</li>
+            <li><b>Ветклиника "Зоовет":</b> пр. Победителей, 45, +375 17 222-33-44</li>
+            <li><b>Приют "Дружок":</b> ул. Лесная, 12, +375 29 123-45-67</li>
+            <li><b>Общество защиты животных:</b> ул. Советская, 8, +375 29 555-66-77</li>
+        </ul>
+    </div>
+    <div class="article-section">
+        <h4><span class="icon"><i class="fas fa-shield-alt"></i></span> Советы по защите питомца</h4>
+        <ul>
+            <li><b>Адресник и чип — обязательны!</b> Это увеличивает шанс вернуть питомца в случае потери.</li>
+            <li>Регулярно обновляйте контакты на адреснике.</li>
+            <li>Не отпускайте питомца гулять без присмотра.</li>
+            <li>Обучайте питомца откликаться на кличку.</li>
+            <li>Держите фото питомца под рукой для быстрого размещения объявлений.</li>
+        </ul>
+    </div>
+    <div class="article-section">
+        <h4><span class="icon"><i class="fas fa-id-badge"></i></span> Зачем нужен чип и адресник?</h4>
+        <p>Чипирование — это безопасная процедура, которая позволяет идентифицировать животное и найти владельца через базу данных. Адресник с актуальным телефоном — самый быстрый способ вернуть питомца домой.</p>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        // Добавляем Font Awesome для иконок
+        if (!document.querySelector('link[href*="font-awesome"]')) {
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css';
+            document.head.appendChild(link);
+        }
+    </script>
+} 

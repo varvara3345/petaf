@@ -1,63 +1,146 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using PetaFF.Data;
 using PetaFF.Models;
+using System.Linq;
+using System.Threading.Tasks;
+using System;
 
 namespace PetaFF.Controllers
 {
     public class HelpController : Controller
     {
-        // Для простоты: храню данные в static (в реальном проекте — в БД)
-        private static List<Volunteer> Volunteers = new List<Volunteer>();
+        private readonly ApplicationDbContext _context;
 
-        public IActionResult Index()
+        public HelpController(ApplicationDbContext context)
         {
-            return View(Volunteers);
+            _context = context;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            
+            // Получаем все заявки для общего списка
+            var allVolunteers = await _context.Volunteers
+                .OrderByDescending(v => v.CreatedAt)
+                .ToListAsync();
+
+            // Получаем заявки текущего пользователя
+            var userVolunteers = userId.HasValue 
+                ? await _context.Volunteers
+                    .Where(v => v.UserId == userId)
+                    .OrderByDescending(v => v.CreatedAt)
+                    .ToListAsync()
+                : new List<Volunteer>();
+
+            // Передаем оба списка в представление
+            ViewBag.UserVolunteers = userVolunteers;
+            return View(allVolunteers);
         }
 
         [HttpPost]
-        public IActionResult AddVolunteer(Volunteer model)
+        public async Task<IActionResult> AddVolunteer(Volunteer model)
         {
-            if (ModelState.IsValid)
+            try
             {
-                Volunteers.Add(model);
+                if (ModelState.IsValid)
+                {
+                    var userId = HttpContext.Session.GetInt32("UserId");
+                    if (userId == null)
+                    {
+                        return RedirectToAction("Login", "Account");
+                    }
+
+                    model.UserId = userId;
+                    model.CreatedAt = DateTime.Now;
+
+                    _context.Volunteers.Add(model);
+                    await _context.SaveChangesAsync();
+
+                    TempData["SuccessMessage"] = "Ваша заявка успешно добавлена!";
+                }
+                else
+                {
+                    foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        TempData["ErrorMessage"] = error.ErrorMessage;
+                    }
+                }
             }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Произошла ошибка при сохранении заявки: " + ex.Message;
+            }
+
             return RedirectToAction("Index");
         }
 
         [HttpGet]
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id < 0 || id >= Volunteers.Count) return RedirectToAction("Index");
-            return View(Volunteers[id]);
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var volunteer = await _context.Volunteers.FindAsync(id);
+            if (volunteer == null || volunteer.UserId != userId)
+            {
+                return RedirectToAction("Index");
+            }
+
+            return View(volunteer);
         }
 
         [HttpPost]
-        public IActionResult Edit(int id, Volunteer model)
+        public async Task<IActionResult> Edit(int id, Volunteer model)
         {
-            if (id < 0 || id >= Volunteers.Count) return RedirectToAction("Index");
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var volunteer = await _context.Volunteers.FindAsync(id);
+            if (volunteer == null || volunteer.UserId != userId)
+            {
+                return RedirectToAction("Index");
+            }
+
             if (ModelState.IsValid)
             {
-                Volunteers[id] = model;
+                volunteer.Name = model.Name;
+                volunteer.Contacts = model.Contacts;
+                volunteer.Districts = model.Districts;
+                volunteer.Comment = model.Comment;
+
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Заявка успешно обновлена!";
             }
+
             return RedirectToAction("Index");
         }
 
         [HttpPost]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id >= 0 && id < Volunteers.Count)
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
             {
-                Volunteers.RemoveAt(id);
+                return RedirectToAction("Login", "Account");
             }
+
+            var volunteer = await _context.Volunteers.FindAsync(id);
+            if (volunteer != null && volunteer.UserId == userId)
+            {
+                _context.Volunteers.Remove(volunteer);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Заявка успешно удалена!";
+            }
+
             return RedirectToAction("Index");
         }
-    }
-    public class Volunteer
-    {
-        public string Name { get; set; }
-        public string Contacts { get; set; }
-        public string Districts { get; set; }
-        public string Comment { get; set; }
     }
 } 

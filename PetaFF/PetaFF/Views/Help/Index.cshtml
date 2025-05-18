@@ -1,4 +1,4 @@
-@model IEnumerable<PetaFF.Controllers.Volunteer>
+@model IEnumerable<PetaFF.Models.Volunteer>
 @{
     ViewData["Title"] = "Помощь и волонтёры";
     var districts = new[] { "Центральный", "Советский", "Ленинский", "Фрунзенский", "Октябрьский", "Партизанский", "Московский", "Заводской" };
@@ -8,6 +8,23 @@
         new { Name = "Общество защиты животных", Address = "ул. Советская, 8", Phone = "+375 29 555-66-77" }
     };
 }
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
 <div class="container mt-4 mb-5">
     <h2 class="mb-4">Помощь и волонтёры</h2>
     <div class="row">
@@ -84,25 +101,27 @@
         </div>
     </div>
 </div>
-@if (Model.Any())
+
+@if (Context.Session.GetInt32("UserId") != null && ViewBag.UserVolunteers != null && ViewBag.UserVolunteers.Count > 0)
 {
     <div class="container mt-4">
         <h4 class="mb-3">Ваши последние заявки</h4>
         <ul class="list-group mb-4">
-            @foreach (var v in Model.Reverse().Take(3).Select((item, idx) => new { item, idx = Model.Count() - 1 - idx }))
+            @foreach (var v in ViewBag.UserVolunteers)
             {
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     <div>
-                        <b>@v.item.Name</b> — <span class="text-muted">@v.item.Districts</span><br />
-                        <span style="font-size:0.95em;">@v.item.Contacts</span>
-                        @if (!string.IsNullOrWhiteSpace(v.item.Comment))
+                        <b>@v.Name</b> — <span class="text-muted">@v.Districts</span><br />
+                        <span style="font-size:0.95em;">@v.Contacts</span>
+                        @if (!string.IsNullOrWhiteSpace(v.Comment))
                         {
-                            <div style="font-size:0.9em; color:#666;">@v.item.Comment</div>
+                            <div style="font-size:0.9em; color:#666;">@v.Comment</div>
                         }
+                        <small class="text-muted">Добавлено: @v.CreatedAt.ToString("dd.MM.yyyy HH:mm")</small>
                     </div>
                     <div>
-                        <a asp-action="Edit" asp-route-id="@v.idx" class="btn btn-sm btn-outline-primary me-2">Редактировать</a>
-                        <form asp-action="Delete" asp-route-id="@v.idx" method="post" style="display:inline;">
+                        <a asp-action="Edit" asp-route-id="@v.Id" class="btn btn-sm btn-outline-primary me-2">Редактировать</a>
+                        <form asp-action="Delete" asp-route-id="@v.Id" method="post" style="display:inline;">
                             <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Удалить заявку?');">Удалить</button>
                         </form>
                     </div>

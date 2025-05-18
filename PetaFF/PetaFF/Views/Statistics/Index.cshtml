@@ -1,0 +1,216 @@
+@model PetaFF.Controllers.StatisticsViewModel
+@{
+    ViewData["Title"] = "Статистика";
+}
+
+<div class="container mt-4 mb-5">
+    <h2 class="mb-4">Статистика</h2>
+
+    <!-- Крупные блоки по всем объявлениям -->
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+            <div class="stat-block bg-gradient-primary text-white">
+                <div class="stat-title">Всего объявлений</div>
+                <div class="stat-value">@Model.TotalAll</div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="stat-block bg-gradient-info text-white">
+                <div class="stat-title">Активных (в поиске)</div>
+                <div class="stat-value">@Model.TotalActive</div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="stat-block bg-gradient-success text-white">
+                <div class="stat-title">Найдено</div>
+                <div class="stat-value">@Model.TotalFound</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Таблица по районам -->
+    <div class="mb-4">
+        <h5 class="mb-2">По районам</h5>
+        <div class="table-responsive">
+            <table class="table table-sm table-hover">
+                <thead>
+                    <tr>
+                        <th>Район</th>
+                        <th class="text-center">Всего</th>
+                        <th class="text-center">В поиске</th>
+                        <th class="text-center">Найдено</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var stat in Model.DistrictStats)
+                    {
+                        <tr>
+                            <td>@stat.District</td>
+                            <td class="text-center">@stat.TotalCount</td>
+                            <td class="text-center">@stat.ActiveCount</td>
+                            <td class="text-center">@stat.FoundCount</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Таблица по видам животных -->
+    <div class="mb-5">
+        <h5 class="mb-2">По видам животных</h5>
+        <div class="table-responsive">
+            <table class="table table-sm table-hover">
+                <thead>
+                    <tr>
+                        <th>Вид</th>
+                        <th class="text-center">Всего</th>
+                        <th class="text-center">В поиске</th>
+                        <th class="text-center">Найдено</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var stat in Model.TypeStats)
+                    {
+                        <tr>
+                            <td>@stat.Type</td>
+                            <td class="text-center">@stat.TotalCount</td>
+                            <td class="text-center">@stat.ActiveCount</td>
+                            <td class="text-center">@stat.FoundCount</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    @if (Model.MyStats != null && Model.MyStats.TotalAll > 0)
+    {
+        <h5 class="mb-2">Мои объявления</h5>
+        <div class="row mb-2">
+            <div class="col-md-4 mb-2">
+                <div class="stat-block bg-gradient-primary text-white">
+                    <div class="stat-title">Всего</div>
+                    <div class="stat-value">@Model.MyStats.TotalAll</div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-2">
+                <div class="stat-block bg-gradient-info text-white">
+                    <div class="stat-title">Активных</div>
+                    <div class="stat-value">@Model.MyStats.TotalActive</div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-2">
+                <div class="stat-block bg-gradient-success text-white">
+                    <div class="stat-title">Найдено</div>
+                    <div class="stat-value">@Model.MyStats.TotalFound</div>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive mb-4">
+            <table class="table table-sm table-hover">
+                <thead>
+                    <tr>
+                        <th>Район</th>
+                        <th class="text-center">Всего</th>
+                        <th class="text-center">В поиске</th>
+                        <th class="text-center">Найдено</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var stat in Model.MyStats.DistrictStats)
+                    {
+                        <tr>
+                            <td>@stat.District</td>
+                            <td class="text-center">@stat.TotalCount</td>
+                            <td class="text-center">@stat.ActiveCount</td>
+                            <td class="text-center">@stat.FoundCount</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    @if (Model.OthersStats != null && Model.OthersStats.TotalAll > 0 && Context.Session.GetInt32("UserId") != null)
+    {
+        <h5 class="mb-2">Объявления других пользователей</h5>
+        <div class="row mb-2">
+            <div class="col-md-4 mb-2">
+                <div class="stat-block bg-gradient-primary text-white">
+                    <div class="stat-title">Всего</div>
+                    <div class="stat-value">@Model.OthersStats.TotalAll</div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-2">
+                <div class="stat-block bg-gradient-info text-white">
+                    <div class="stat-title">Активных</div>
+                    <div class="stat-value">@Model.OthersStats.TotalActive</div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-2">
+                <div class="stat-block bg-gradient-success text-white">
+                    <div class="stat-title">Найдено</div>
+                    <div class="stat-value">@Model.OthersStats.TotalFound</div>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive mb-4">
+            <table class="table table-sm table-hover">
+                <thead>
+                    <tr>
+                        <th>Район</th>
+                        <th class="text-center">Всего</th>
+                        <th class="text-center">В поиске</th>
+                        <th class="text-center">Найдено</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var stat in Model.OthersStats.DistrictStats)
+                    {
+                        <tr>
+                            <td>@stat.District</td>
+                            <td class="text-center">@stat.TotalCount</td>
+                            <td class="text-center">@stat.ActiveCount</td>
+                            <td class="text-center">@stat.FoundCount</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+<style>
+    .stat-block {
+        border-radius: 1rem;
+        padding: 1.2rem 0.5rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        text-align: center;
+        margin-bottom: 0.5rem;
+    }
+    .stat-title {
+        font-size: 1rem;
+        font-weight: 500;
+        margin-bottom: 0.3rem;
+        letter-spacing: 0.5px;
+    }
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+    }
+    .bg-gradient-primary {
+        background: linear-gradient(90deg, #007bff 0%, #00c6ff 100%);
+    }
+    .bg-gradient-info {
+        background: linear-gradient(90deg, #17a2b8 0%, #6dd5ed 100%);
+    }
+    .bg-gradient-success {
+        background: linear-gradient(90deg, #28a745 0%, #a8e063 100%);
+    }
+    h5 {
+        font-weight: 600;
+        margin-top: 2rem;
+    }
+</style> 

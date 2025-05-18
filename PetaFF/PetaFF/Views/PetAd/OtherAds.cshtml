@@ -78,14 +78,25 @@
                             Дата: @item.ad.DateLost?.ToString("dd.MM.yyyy")
                         </small>
                     </p>
-                    @if (item.idx != null)
-                    {
-                        <a asp-controller="PetAd" asp-action="FakeDetails" asp-route-id="@(item.idx + 1)" class="btn btn-primary">Подробнее</a>
-                    }
-                    else if (item.ad.Id > 0)
-                    {
-                        <a asp-controller="PetAd" asp-action="Details" asp-route-id="@item.ad.Id" class="btn btn-primary">Подробнее</a>
-                    }
+                    <div class="d-flex justify-content-between align-items-center">
+                        @if (item.idx != null)
+                        {
+                            <a asp-controller="PetAd" asp-action="FakeDetails" asp-route-id="@(item.idx + 1)" class="btn btn-primary">Подробнее</a>
+                            <button type="button" class="btn btn-outline-warning ms-2 add-fake-favorite" data-fake-idx="@item.idx">
+                                <i class="fas fa-star"></i> Добавить в избранное
+                            </button>
+                        }
+                        else if (item.ad.Id > 0)
+                        {
+                            <a asp-controller="PetAd" asp-action="Details" asp-route-id="@item.ad.Id" class="btn btn-primary">Подробнее</a>
+                            <form asp-controller="Favorite" asp-action="ToggleFavorite" method="post" class="ms-2">
+                                <input type="hidden" name="petAdId" value="@item.ad.Id" />
+                                <button type="submit" class="btn btn-outline-warning">
+                                    <i class="fas fa-star"></i> Добавить в избранное
+                                </button>
+                            </form>
+                        }
+                    </div>
                 </div>
             </div>
         </div>
@@ -108,5 +119,36 @@
             link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css';
             document.head.appendChild(link);
         }
+
+        // --- Избранное для фейковых объявлений ---
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- Деактивация кнопок для уже добавленных фейковых объявлений ---
+            let favs = [];
+            try {
+                favs = JSON.parse(localStorage.getItem('fakeFavorites') || '[]');
+            } catch {}
+            document.querySelectorAll('.add-fake-favorite').forEach(function(btn) {
+                const idx = btn.getAttribute('data-fake-idx');
+                const fakeAds = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(fakeAds));
+                const ad = fakeAds[idx];
+                if (ad && favs.some(f => f.Name === ad.Name && f.Type === ad.Type && f.DateLost === ad.DateLost)) {
+                    btn.innerHTML = '<i class="fas fa-star"></i> В избранном';
+                    btn.disabled = true;
+                }
+                btn.addEventListener('click', function() {
+                    const idx = btn.getAttribute('data-fake-idx');
+                    const fakeAds = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(fakeAds));
+                    const ad = fakeAds[idx];
+                    if (!ad) return;
+                    let favs = JSON.parse(localStorage.getItem('fakeFavorites') || '[]');
+                    if (!favs.some(f => f.Name === ad.Name && f.Type === ad.Type && f.DateLost === ad.DateLost)) {
+                        favs.push(ad);
+                        localStorage.setItem('fakeFavorites', JSON.stringify(favs));
+                        btn.innerHTML = '<i class="fas fa-star"></i> В избранном';
+                        btn.disabled = true;
+                    }
+                });
+            });
+        });
     </script>
 } 

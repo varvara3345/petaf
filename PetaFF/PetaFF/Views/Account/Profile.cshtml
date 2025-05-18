@@ -1,3 +1,4 @@
+@using PetaFF.Extensions
 @model PetaFF.Models.User
 
 @{
@@ -57,57 +58,7 @@
         </div>
 
         <div class="col-md-8">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Мои объявления</h5>
-                    @if (Model.PetAds != null && Model.PetAds.Any())
-                    {
-                        <div class="list-group">
-                            @foreach (var ad in Model.PetAds)
-                            {
-                                <a href="@Url.Action("Details", "PetAd", new { id = ad.Id })" class="list-group-item list-group-item-action">
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <h6 class="mb-1">@ad.Name - @ad.Type</h6>
-                                        <small>@ad.CreatedAt.ToString("dd.MM.yyyy")</small>
-                                    </div>
-                                    <p class="mb-1">@ad.Description</p>
-                                    <small>Статус: @ad.Status</small>
-                                </a>
-                            }
-                        </div>
-                    }
-                    else
-                    {
-                        <p class="text-muted">У вас пока нет объявлений</p>
-                    }
-                </div>
-            </div>
-
-            <div class="card mt-3">
-                <div class="card-body">
-                    <h5 class="card-title">Избранные объявления</h5>
-                    @if (Model.Favorites != null && Model.Favorites.Any())
-                    {
-                        <div class="list-group">
-                            @foreach (var favorite in Model.Favorites)
-                            {
-                                <a href="@Url.Action("Details", "PetAd", new { id = favorite.PetAd.Id })" class="list-group-item list-group-item-action">
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <h6 class="mb-1">@favorite.PetAd.Name - @favorite.PetAd.Type</h6>
-                                        <small>@favorite.CreatedAt.ToString("dd.MM.yyyy")</small>
-                                    </div>
-                                    <p class="mb-1">@favorite.PetAd.Description</p>
-                                    <small>Район: @favorite.PetAd.District</small>
-                                </a>
-                            }
-                        </div>
-                    }
-                    else
-                    {
-                        <p class="text-muted">У вас пока нет избранных объявлений</p>
-                    }
-                </div>
-            </div>
+            <!-- Удалён блок с избранными объявлениями -->
         </div>
     </div>
 </div> 

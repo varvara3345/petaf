@@ -7,6 +7,8 @@
 <div class="container mt-4">
     <h2>Избранные объявления</h2>
 
+    <div id="fake-favorites-row" class="row"></div>
+
     @if (Model != null && Model.Any())
     {
         <div class="row">
@@ -57,4 +59,59 @@
             У вас пока нет избранных объявлений. Вы можете добавлять объявления в избранное, нажимая на кнопку "Добавить в избранное" на странице объявления.
         </div>
     }
-</div> 
+</div>
+
+@section Scripts {
+    <script>
+        // --- Вывод фейковых избранных объявлений из localStorage ---
+        function renderFakeFavorites() {
+            const row = document.getElementById('fake-favorites-row');
+            if (!row) return;
+            row.innerHTML = '';
+            let favs = [];
+            try {
+                favs = JSON.parse(localStorage.getItem('fakeFavorites') || '[]');
+            } catch {}
+            if (favs.length === 0) return;
+            favs.forEach(function(ad) {
+                const col = document.createElement('div');
+                col.className = 'col-md-6 mb-4';
+                col.innerHTML = `
+                    <div class="card h-100">
+                        ${ad.PhotoPath ? `<img src="${ad.PhotoPath}" class="card-img-top" alt="${ad.Name}" style="height: 200px; object-fit: cover;">` : ''}
+                        <div class="card-body">
+                            <h5 class="card-title">${ad.Name} - ${ad.Type}</h5>
+                            <p class="card-text">${ad.Description}</p>
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    Район: ${ad.District || '-'}<br>
+                                    Статус: ${ad.Status || '-'}<br>
+                                    Автор: ${ad.User?.Username || '-'}<br>
+                                    Дата: ${(ad.DateLost ? new Date(ad.DateLost).toLocaleDateString() : '-')}
+                                </small>
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <button class="btn btn-outline-danger remove-fake-favorite" data-name="${ad.Name}" data-type="${ad.Type}" data-date="${ad.DateLost}">
+                                    <i class="fas fa-star"></i> Удалить из избранного
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                row.appendChild(col);
+            });
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            renderFakeFavorites();
+            document.getElementById('fake-favorites-row').addEventListener('click', function(e) {
+                if (e.target.closest('.remove-fake-favorite')) {
+                    const btn = e.target.closest('.remove-fake-favorite');
+                    let favs = JSON.parse(localStorage.getItem('fakeFavorites') || '[]');
+                    favs = favs.filter(f => !(f.Name === btn.dataset.name && f.Type === btn.dataset.type && f.DateLost === btn.dataset.date));
+                    localStorage.setItem('fakeFavorites', JSON.stringify(favs));
+                    renderFakeFavorites();
+                }
+            });
+        });
+    </script>
+} 

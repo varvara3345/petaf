@@ -51,6 +51,9 @@
             <div class="d-flex align-items-center mb-3">
                 <button id="likeBtn" class="btn btn-outline-danger me-2"><i class="bi bi-heart"></i> <span id="likeCount">0</span></button>
                 <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#chatModal"><i class="bi bi-chat-dots"></i> Связаться с автором</button>
+                <a href="@Url.Action("PrintFake", "PetAd", new { name = Model.Name })" target="_blank" class="btn btn-outline-secondary ms-2">
+                    <i class="fas fa-print"></i> Распечатать объявление
+                </a>
             </div>
 
             <div class="comments-section mt-4">

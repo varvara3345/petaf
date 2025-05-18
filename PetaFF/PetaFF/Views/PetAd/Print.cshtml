@@ -1,0 +1,41 @@
+@model PetaFF.Models.PetAd
+@{
+    Layout = null;
+    var url = $"https://мойсайт/объявление/{Model.Id}";
+}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <title>Печать объявления</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #fff; color: #222; }
+        .print-card { max-width: 600px; margin: 30px auto; border: 2px solid #222; border-radius: 12px; padding: 24px; background: #fff; }
+        .print-card img { max-width: 100%; max-height: 300px; display: block; margin: 0 auto 16px; border-radius: 8px; }
+        .print-title { font-size: 2em; font-weight: bold; margin-bottom: 12px; }
+        .print-desc { font-size: 1.2em; margin-bottom: 16px; }
+        .print-info { margin-bottom: 12px; }
+        .print-qr { text-align: center; margin-top: 24px; }
+        @@media print { .noprint { display: none; } }
+    </style>
+</head>
+<body>
+    <div class="print-card">
+        @if (!string.IsNullOrEmpty(Model.PhotoPath))
+        {
+            <img src="@Model.PhotoPath" alt="Фото животного" />
+        }
+        <div class="print-title">@Model.Name</div>
+        <div class="print-desc">@Model.Description</div>
+        <div class="print-info"><b>Адрес пропажи:</b> @Model.Address</div>
+        <div class="print-info"><b>Контакты:</b> @Model.ContactPhone</div>
+        <div class="print-qr">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=@(url)" alt="QR-код" />
+            <div style="font-size:0.9em; color:#888; margin-top:4px;">QR-код для перехода к объявлению</div>
+        </div>
+        <div class="noprint" style="text-align:center; margin-top:24px;">
+            <button onclick="window.print()" class="btn btn-primary">Печать</button>
+        </div>
+    </div>
+</body>
+</html> 

@@ -484,5 +484,30 @@ namespace PetaFF.Controllers
             var ad = fakeAds[id - 1];
             return View(ad);
         }
+
+        // Печать реального объявления
+        public async Task<IActionResult> Print(int id)
+        {
+            var petAd = await _context.PetAds.FirstOrDefaultAsync(p => p.Id == id);
+            if (petAd == null)
+                return NotFound();
+            return View("Print", petAd);
+        }
+
+        // Печать фейкового объявления (по имени)
+        public IActionResult PrintFake(string name)
+        {
+            // Для простоты ищем фейковое объявление по имени (в реальном проекте лучше по id или hash)
+            var fakeAds = new List<PetAd>
+            {
+                new PetAd { Name = "Барсик", Type = "Кот", Description = "Серый пушистый кот, пропал возле ул. Немига. Без ошейника.", DateLost = DateTime.ParseExact("10.05.2025", "dd.MM.yyyy", CultureInfo.InvariantCulture), ContactPhone = "+375291234567", Status = PetStatus.InSearch, Address = "ул. Немига", District = "Центральный", User = new User { Username = "Анна" }, PhotoPath = "https://images.pexels.com/photos/1276553/pexels-photo-1276553.jpeg" },
+                new PetAd { Name = "Белла", Type = "Собака", Description = "Лабрадор, светлая, дружелюбная. Убежала возле Логойского тракта.", DateLost = DateTime.ParseExact("29.04.2025", "dd.MM.yyyy", CultureInfo.InvariantCulture), ContactPhone = "+375296543210", Status = PetStatus.InSearch, Address = "Логойский тракт", District = "Советский", User = new User { Username = "Иван" }, PhotoPath = "https://images.pexels.com/photos/8700/pexels-photo.jpg" },
+                // ... (добавьте остальные фейковые объявления по аналогии) ...
+            };
+            var ad = fakeAds.FirstOrDefault(f => f.Name == name);
+            if (ad == null)
+                return NotFound();
+            return View("PrintFake", ad);
+        }
     }
 } 

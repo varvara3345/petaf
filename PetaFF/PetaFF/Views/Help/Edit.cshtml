@@ -1,0 +1,41 @@
+@model PetaFF.Controllers.Volunteer
+@{
+    ViewData["Title"] = "Редактировать заявку";
+    var districts = new[] { "Центральный", "Советский", "Ленинский", "Фрунзенский", "Октябрьский", "Партизанский", "Московский", "Заводской" };
+}
+<div class="container mt-4 mb-5">
+    <h2 class="mb-4">Редактировать заявку</h2>
+    <form asp-action="Edit" method="post">
+        <div class="mb-3">
+            <label class="form-label">Имя</label>
+            <input type="text" name="Name" class="form-control" value="@Model.Name" required />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Контакты (телефон, email)</label>
+            <input type="text" name="Contacts" class="form-control" value="@Model.Contacts" required />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Районы, где готовы помогать</label>
+            <select name="Districts" class="form-select" required>
+                <option value="">Выберите район</option>
+                @foreach (var d in districts)
+                {
+                    if (Model.Districts == d)
+                    {
+                        <option value="@d" selected>@d</option>
+                    }
+                    else
+                    {
+                        <option value="@d">@d</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Комментарий</label>
+            <textarea name="Comment" class="form-control" rows="2">@Model.Comment</textarea>
+        </div>
+        <button type="submit" class="btn btn-success">Сохранить</button>
+        <a asp-action="Index" class="btn btn-secondary ms-2">Отмена</a>
+    </form>
+</div> 

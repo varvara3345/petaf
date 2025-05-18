@@ -1,0 +1,113 @@
+@model IEnumerable<PetaFF.Controllers.Volunteer>
+@{
+    ViewData["Title"] = "Помощь и волонтёры";
+    var districts = new[] { "Центральный", "Советский", "Ленинский", "Фрунзенский", "Октябрьский", "Партизанский", "Московский", "Заводской" };
+    var organizations = new[] {
+        new { Name = "Приют 'Дружок'", Address = "ул. Лесная, 12", Phone = "+375 29 123-45-67" },
+        new { Name = "Ветклиника 'Зоовет'", Address = "пр. Победителей, 45", Phone = "+375 17 222-33-44" },
+        new { Name = "Общество защиты животных", Address = "ул. Советская, 8", Phone = "+375 29 555-66-77" }
+    };
+}
+<div class="container mt-4 mb-5">
+    <h2 class="mb-4">Помощь и волонтёры</h2>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Стать волонтёром / предложить помощь</h5>
+                    <form asp-action="AddVolunteer" method="post">
+                        <div class="mb-3">
+                            <label class="form-label">Имя</label>
+                            <input type="text" name="Name" class="form-control" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Контакты (телефон, email)</label>
+                            <input type="text" name="Contacts" class="form-control" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Районы, где готовы помогать</label>
+                            <select name="Districts" class="form-select" required>
+                                <option value="">Выберите район</option>
+                                @foreach (var d in districts) { <option value="@d">@d</option> }
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Комментарий</label>
+                            <textarea name="Comment" class="form-control" rows="2" placeholder="Например: могу распечатать листовки, живу рядом и могу выйти на поиск"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success">Отправить</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Список волонтёров и помощников</h5>
+                    @if (Model.Any())
+                    {
+                        <ul class="list-group">
+                            @foreach (var v in Model)
+                            {
+                                <li class="list-group-item">
+                                    <b>@v.Name</b> — <span class="text-muted">@v.Districts</span><br />
+                                    <span style="font-size:0.95em;">@v.Contacts</span>
+                                    @if (!string.IsNullOrWhiteSpace(v.Comment))
+                                    {
+                                        <div style="font-size:0.9em; color:#666;">@v.Comment</div>
+                                    }
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <div class="text-muted">Пока никто не откликнулся</div>
+                    }
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Приюты, ветклиники и организации рядом</h5>
+                    <ul class="list-group">
+                        @foreach (var org in organizations)
+                        {
+                            <li class="list-group-item">
+                                <b>@org.Name</b><br />
+                                <span class="text-muted">@org.Address</span><br />
+                                <span style="font-size:0.95em;">@org.Phone</span>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@if (Model.Any())
+{
+    <div class="container mt-4">
+        <h4 class="mb-3">Ваши последние заявки</h4>
+        <ul class="list-group mb-4">
+            @foreach (var v in Model.Reverse().Take(3).Select((item, idx) => new { item, idx = Model.Count() - 1 - idx }))
+            {
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <b>@v.item.Name</b> — <span class="text-muted">@v.item.Districts</span><br />
+                        <span style="font-size:0.95em;">@v.item.Contacts</span>
+                        @if (!string.IsNullOrWhiteSpace(v.item.Comment))
+                        {
+                            <div style="font-size:0.9em; color:#666;">@v.item.Comment</div>
+                        }
+                    </div>
+                    <div>
+                        <a asp-action="Edit" asp-route-id="@v.idx" class="btn btn-sm btn-outline-primary me-2">Редактировать</a>
+                        <form asp-action="Delete" asp-route-id="@v.idx" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Удалить заявку?');">Удалить</button>
+                        </form>
+                    </div>
+                </li>
+            }
+        </ul>
+    </div>
+} 

@@ -1,0 +1,79 @@
+@{
+    ViewData["Title"] = "Мини-игры и викторины";
+}
+
+<div class="container mt-4">
+    <h1 class="text-center mb-4">Мини-игры и викторины</h1>
+    <p class="text-center mb-5">Проверьте свои знания о домашних животных в наших увлекательных играх и викторинах!</p>
+
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Викторина по уходу за питомцами</h5>
+                    <p class="card-text">Проверьте свои знания о правильном уходе за домашними животными.</p>
+                    <a href="@Url.Action("PetCareQuiz", "Games")" class="btn btn-primary">Начать викторину</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Угадай породу</h5>
+                    <p class="card-text">Попробуйте угадать породу собаки или кошки по фотографии.</p>
+                    <a href="@Url.Action("BreedGuessing", "Games")" class="btn btn-primary">Играть</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Что делать, если нашел потерявшееся животное</h5>
+                    <p class="card-text">Проверьте свои знания о правильных действиях при встрече с потерявшимся питомцем.</p>
+                    <a href="@Url.Action("LostPetGuide", "Games")" class="btn btn-primary">Пройти тест</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Интересные факты о животных</h5>
+                    <p class="card-text">Узнайте увлекательные факты о домашних животных.</p>
+                    <a href="@Url.Action("PetFacts", "Games")" class="btn btn-primary">Читать</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .card {
+            transition: transform 0.2s;
+            border: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-title {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        
+        .btn-primary {
+            background-color: #3498db;
+            border: none;
+            padding: 8px 20px;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+    </style>
+} 

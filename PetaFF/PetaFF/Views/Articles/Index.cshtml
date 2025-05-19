@@ -1,98 +1,180 @@
 @{
     ViewData["Title"] = "Статьи и советы";
 }
-<style>
-    .article-section {
-        background: #f8fafc;
-        border-radius: 16px;
-        box-shadow: 0 2px 12px rgba(0,0,0,0.04);
-        padding: 32px 24px 24px 24px;
-        margin-bottom: 32px;
-        border-left: 6px solid #4e73df;
-    }
-    .article-section h4 {
-        color: #4e73df;
-        font-weight: bold;
-        margin-bottom: 18px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    .article-section ul, .article-section ol {
-        margin-left: 18px;
-        font-size: 1.08em;
-        color: #222;
-    }
-    .article-section li {
-        margin-bottom: 8px;
-        color: #222;
-    }
-    .article-section .icon {
-        font-size: 1.2em;
-        color: #4e73df;
-    }
-    .article-section p {
-        font-size: 1.08em;
-        color: #222;
-    }
-    .article-section strong, .article-section b {
-        color: #2e2e2e;
-    }
-    h2.articles-title {
-        color: #2a4cff;
-        font-weight: 900;
-        font-size: 2.5rem;
-        text-shadow: 0 2px 8px #bfcaff, 0 1px 0 #fff;
-        letter-spacing: 1px;
-        margin-bottom: 36px;
-    }
-</style>
-<div class="container mt-4 mb-5">
-    <h2 class="articles-title">Статьи и советы</h2>
-    <div class="article-section">
-        <h4><span class="icon"><i class="fas fa-search"></i></span> Как искать потерявшегося питомца — советы и пошаговая инструкция</h4>
-        <ol>
-            <li><b>Сохраняйте спокойствие.</b> Не паникуйте, действуйте быстро и обдуманно.</li>
-            <li><b>Проверьте дом и ближайшие укрытия.</b> Осмотрите подъезды, подвалы, чердаки, гаражи, кусты.</li>
-            <li><b>Поспрашивайте соседей и прохожих.</b> Покажите фото питомца, оставьте контакты.</li>
-            <li><b>Разместите объявления.</b> Используйте сайты, соцсети, распечатайте листовки с фото и контактами.</li>
-            <li><b>Обратитесь в приюты и ветклиники.</b> Оставьте информацию о пропаже.</li>
-            <li><b>Проверьте камеры видеонаблюдения.</b> Если есть доступ — посмотрите записи.</li>
-        </ol>
-    </div>
-    <div class="article-section">
-        <h4><span class="icon"><i class="fas fa-paw"></i></span> Что делать, если вы нашли чужого животного</h4>
-        <ul>
-            <li>Проверьте, нет ли у животного адресника или чипа (ветклиника поможет считать чип).</li>
-            <li>Сфотографируйте животное и разместите объявление о находке в интернете и на улицах.</li>
-            <li>Сообщите о находке в приюты, ветклиники, местные группы в соцсетях.</li>
-            <li>Постарайтесь временно обеспечить безопасность животного (еда, вода, укрытие).</li>
-        </ul>
-    </div>
-    <div class="article-section">
-        <h4><span class="icon"><i class="fas fa-address-book"></i></span> Контакты организаций</h4>
-        <ul>
-            <li><b>Полиция:</b> 102</li>
-            <li><b>Ветклиника "Зоовет":</b> пр. Победителей, 45, +375 17 222-33-44</li>
-            <li><b>Приют "Дружок":</b> ул. Лесная, 12, +375 29 123-45-67</li>
-            <li><b>Общество защиты животных:</b> ул. Советская, 8, +375 29 555-66-77</li>
-        </ul>
-    </div>
-    <div class="article-section">
-        <h4><span class="icon"><i class="fas fa-shield-alt"></i></span> Советы по защите питомца</h4>
-        <ul>
-            <li><b>Адресник и чип — обязательны!</b> Это увеличивает шанс вернуть питомца в случае потери.</li>
-            <li>Регулярно обновляйте контакты на адреснике.</li>
-            <li>Не отпускайте питомца гулять без присмотра.</li>
-            <li>Обучайте питомца откликаться на кличку.</li>
-            <li>Держите фото питомца под рукой для быстрого размещения объявлений.</li>
-        </ul>
-    </div>
-    <div class="article-section">
-        <h4><span class="icon"><i class="fas fa-id-badge"></i></span> Зачем нужен чип и адресник?</h4>
-        <p>Чипирование — это безопасная процедура, которая позволяет идентифицировать животное и найти владельца через базу данных. Адресник с актуальным телефоном — самый быстрый способ вернуть питомца домой.</p>
+
+<div class="container mt-4">
+    <h1 class="text-center mb-4">Статьи и советы по уходу за питомцами</h1>
+    
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="articles-container">
+                <div class="article-card">
+                    <div class="article-icon">
+                        <i class="fas fa-paw"></i>
+                    </div>
+                    <div class="article-content">
+                        <h3>Основы ухода за щенком</h3>
+                        <p class="article-meta">
+                            <i class="far fa-clock"></i> 15 минут на чтение
+                            <span class="ms-3"><i class="fas fa-tag"></i> Собаки</span>
+                        </p>
+                        <p class="article-preview">
+                            Первые месяцы жизни щенка - самые важные для формирования его характера и привычек. 
+                            Узнайте о правильном питании, воспитании и уходе за маленьким питомцем.
+                        </p>
+                        <a href="@Url.Action("PuppyCare", "Articles")" class="btn btn-outline-primary">Читать далее</a>
+                    </div>
+                </div>
+
+                <div class="article-card">
+                    <div class="article-icon">
+                        <i class="fas fa-cat"></i>
+                    </div>
+                    <div class="article-content">
+                        <h3>Как приучить кошку к лотку</h3>
+                        <p class="article-meta">
+                            <i class="far fa-clock"></i> 10 минут на чтение
+                            <span class="ms-3"><i class="fas fa-tag"></i> Кошки</span>
+                        </p>
+                        <p class="article-preview">
+                            Правильное приучение кошки к лотку - залог чистоты в доме и комфорта питомца. 
+                            Советы по выбору наполнителя, расположению лотка и решению возможных проблем.
+                        </p>
+                        <a href="@Url.Action("CatLitterTraining", "Articles")" class="btn btn-outline-primary">Читать далее</a>
+                    </div>
+                </div>
+
+                <div class="article-card">
+                    <div class="article-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="article-content">
+                        <h3>Здоровье питомца: профилактика и уход</h3>
+                        <p class="article-meta">
+                            <i class="far fa-clock"></i> 20 минут на чтение
+                            <span class="ms-3"><i class="fas fa-tag"></i> Здоровье</span>
+                        </p>
+                        <p class="article-preview">
+                            Регулярные осмотры, вакцинация и правильное питание - основа здоровья вашего питомца. 
+                            Узнайте о важных аспектах профилактического ухода и ранних признаках заболеваний.
+                        </p>
+                        <a href="@Url.Action("PetHealth", "Articles")" class="btn btn-outline-primary">Читать далее</a>
+                    </div>
+                </div>
+
+                <div class="article-card">
+                    <div class="article-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <div class="article-content">
+                        <h3>Обустройство дома для питомца</h3>
+                        <p class="article-meta">
+                            <i class="far fa-clock"></i> 12 минут на чтение
+                            <span class="ms-3"><i class="fas fa-tag"></i> Уход</span>
+                        </p>
+                        <p class="article-preview">
+                            Создание безопасного и комфортного пространства для питомца - важная задача каждого хозяина. 
+                            Советы по организации места отдыха, игровой зоны и хранения корма.
+                        </p>
+                        <a href="@Url.Action("PetHomeSetup", "Articles")" class="btn btn-outline-primary">Читать далее</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+@section Styles {
+    <style>
+        .articles-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .article-card {
+            display: flex;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .article-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .article-icon {
+            flex-shrink: 0;
+            width: 60px;
+            height: 60px;
+            background-color: #f8f9fa;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1.5rem;
+        }
+
+        .article-icon i {
+            font-size: 1.5rem;
+            color: #6c757d;
+        }
+
+        .article-content {
+            flex-grow: 1;
+        }
+
+        .article-content h3 {
+            color: #2c3e50;
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .article-meta {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .article-preview {
+            color: #495057;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .btn-outline-primary {
+            color: #3498db;
+            border-color: #3498db;
+            padding: 0.5rem 1.25rem;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: #3498db;
+            border-color: #3498db;
+            color: #fff;
+        }
+
+        @@media screen and (max-width: 768px) {
+            .article-card {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .article-icon {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+}
+
 @section Scripts {
     <script>
         // Добавляем Font Awesome для иконок

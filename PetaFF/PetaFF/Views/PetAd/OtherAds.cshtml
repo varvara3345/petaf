@@ -143,7 +143,21 @@
                     if (!ad) return;
                     let favs = JSON.parse(localStorage.getItem('fakeFavorites') || '[]');
                     if (!favs.some(f => f.Name === ad.Name && f.Type === ad.Type && f.DateLost === ad.DateLost)) {
-                        favs.push(ad);
+                        // Сохраняем статус в правильном формате
+                        const statusMap = {
+                            'InSearch': { class: 'bg-danger', displayName: 'В поиске' },
+                            'Found': { class: 'bg-success', displayName: 'Найден' },
+                            'TemporaryShelter': { class: 'bg-warning', displayName: 'Временный приют' },
+                            'InShelter': { class: 'bg-info', displayName: 'В приюте' }
+                        };
+                        
+                        // Создаем копию объявления с правильным форматом статуса
+                        const adToSave = {
+                            ...ad,
+                            Status: statusMap[ad.Status] || { class: 'bg-secondary', displayName: 'Неизвестно' }
+                        };
+                        
+                        favs.push(adToSave);
                         localStorage.setItem('fakeFavorites', JSON.stringify(favs));
                         btn.innerHTML = '<i class="fas fa-star"></i> В избранном';
                         btn.disabled = true;

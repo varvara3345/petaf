@@ -1,0 +1,171 @@
+@{
+    ViewData["Title"] = "Интересные факты о животных";
+}
+
+<div class="container mt-4">
+    <h1 class="text-center mb-4">Интересные факты о животных</h1>
+    
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card-facts-container">
+                <!-- Карточки будут добавлены через JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <button id="shuffle-facts" class="btn btn-primary">Перемешать факты</button>
+        <a href="@Url.Action("Index", "Games")" class="btn btn-outline-primary ms-2">Вернуться к играм</a>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const facts = [
+            {
+                category: "Собаки",
+                facts: [
+                    "Собаки могут различать более 500 000 запахов",
+                    "Щенки рождаются слепыми, глухими и беззубыми",
+                    "Собаки потеют только через подушечки лап",
+                    "Самой древней породой собак считается салюки",
+                    "Собаки могут видеть в темноте лучше, чем люди"
+                ]
+            },
+            {
+                category: "Кошки",
+                facts: [
+                    "Кошки могут издавать более 100 различных звуков",
+                    "У кошек нет потовых желез по всему телу",
+                    "Кошки спят около 16 часов в сутки",
+                    "Кошки могут поворачивать уши на 180 градусов",
+                    "Отпечаток носа кошки уникален, как отпечаток пальца человека"
+                ]
+            },
+            {
+                category: "Общие факты",
+                facts: [
+                    "Домашние животные могут снижать уровень стресса у хозяев",
+                    "Регулярные прогулки с собакой могут продлить жизнь хозяину",
+                    "Кошки и собаки могут дружить между собой",
+                    "Домашние животные могут чувствовать настроение хозяина",
+                    "Общение с животными помогает развивать эмпатию у детей"
+                ]
+            }
+        ];
+
+        function createFactCard(category, fact) {
+            const card = document.createElement('div');
+            card.className = 'fact-card';
+            card.innerHTML = `
+                <div class="fact-card-inner">
+                    <div class="fact-card-front">
+                        <h3>${category}</h3>
+                        <p>Нажмите, чтобы узнать факт</p>
+                    </div>
+                    <div class="fact-card-back">
+                        <p>${fact}</p>
+                    </div>
+                </div>
+            `;
+            return card;
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function displayFacts() {
+            const container = document.querySelector('.card-facts-container');
+            container.innerHTML = '';
+            
+            const allFacts = [];
+            facts.forEach(category => {
+                category.facts.forEach(fact => {
+                    allFacts.push({ category: category.category, fact: fact });
+                });
+            });
+            
+            shuffleArray(allFacts).forEach(({ category, fact }) => {
+                container.appendChild(createFactCard(category, fact));
+            });
+        }
+
+        document.getElementById('shuffle-facts').addEventListener('click', displayFacts);
+        displayFacts();
+    </script>
+}
+
+@section Styles {
+    <style>
+        .card-facts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .fact-card {
+            perspective: 1000px;
+            height: 200px;
+        }
+        
+        .fact-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+        
+        .fact-card:hover .fact-card-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .fact-card-front, .fact-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 10px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .fact-card-front {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .fact-card-back {
+            background-color: #2ecc71;
+            color: white;
+            transform: rotateY(180deg);
+        }
+        
+        .fact-card h3 {
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        .fact-card p {
+            margin: 0;
+            font-size: 1.1rem;
+            line-height: 1.4;
+        }
+        
+        .btn {
+            padding: 0.5rem 1.5rem;
+        }
+    </style>
+} 

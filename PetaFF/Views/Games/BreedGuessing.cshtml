@@ -1,0 +1,178 @@
+@{
+    ViewData["Title"] = "Угадай породу";
+}
+
+<div class="container mt-4">
+    <h1 class="text-center mb-4">Угадай породу</h1>
+    <div id="game-container" class="max-width-800 mx-auto">
+        <div class="card mb-4">
+            <img id="pet-image" src="" class="card-img-top" alt="Фото животного">
+            <div class="card-body">
+                <h5 class="card-title text-center mb-4">Какая это порода?</h5>
+                <div id="breed-options" class="list-group">
+                    <!-- Варианты ответов будут добавлены через JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mb-4">
+            <div class="d-inline-block">
+                <span class="badge bg-primary p-2">Правильных ответов: <span id="score">0</span></span>
+            </div>
+            <div class="d-inline-block ms-3">
+                <span class="badge bg-secondary p-2">Всего вопросов: <span id="total">0</span></span>
+            </div>
+        </div>
+
+        <div id="result-container" class="text-center" style="display: none;">
+            <h3>Игра окончена!</h3>
+            <p>Ваш результат: <span id="final-score">0</span> из <span id="final-total">0</span></p>
+            <button id="restart-game" class="btn btn-primary mt-3">Играть снова</button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const gameData = [
+            {
+                image: "/images/breeds/labrador.jpg",
+                breed: "Лабрадор",
+                options: ["Лабрадор", "Немецкая овчарка", "Золотистый ретривер", "Ротвейлер"]
+            },
+            {
+                image: "/images/breeds/siamese.jpg",
+                breed: "Сиамская кошка",
+                options: ["Британская кошка", "Сиамская кошка", "Мейн-кун", "Персидская кошка"]
+            },
+            {
+                image: "/images/breeds/husky.jpg",
+                breed: "Сибирский хаски",
+                options: ["Аляскинский маламут", "Сибирский хаски", "Самоед", "Акита-ину"]
+            },
+            {
+                image: "/images/breeds/persian.jpg",
+                breed: "Персидская кошка",
+                options: ["Персидская кошка", "Русская голубая", "Бенгальская кошка", "Сфинкс"]
+            },
+            {
+                image: "/images/breeds/german-shepherd.jpg",
+                breed: "Немецкая овчарка",
+                options: ["Бельгийская овчарка", "Немецкая овчарка", "Австралийская овчарка", "Колли"]
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function showQuestion() {
+            const question = gameData[currentQuestion];
+            document.getElementById('pet-image').src = question.image;
+            
+            const optionsContainer = document.getElementById('breed-options');
+            optionsContainer.innerHTML = '';
+            
+            const shuffledOptions = shuffleArray([...question.options]);
+            shuffledOptions.forEach(option => {
+                const button = document.createElement('button');
+                button.className = 'list-group-item list-group-item-action';
+                button.textContent = option;
+                button.onclick = () => checkAnswer(option);
+                optionsContainer.appendChild(button);
+            });
+
+            document.getElementById('total').textContent = gameData.length;
+        }
+
+        function checkAnswer(selectedBreed) {
+            const question = gameData[currentQuestion];
+            const buttons = document.querySelectorAll('#breed-options button');
+            
+            buttons.forEach(button => button.disabled = true);
+            
+            if (selectedBreed === question.breed) {
+                buttons[Array.from(buttons).findIndex(btn => btn.textContent === selectedBreed)]
+                    .classList.add('list-group-item-success');
+                score++;
+                document.getElementById('score').textContent = score;
+            } else {
+                buttons[Array.from(buttons).findIndex(btn => btn.textContent === selectedBreed)]
+                    .classList.add('list-group-item-danger');
+                buttons[Array.from(buttons).findIndex(btn => btn.textContent === question.breed)]
+                    .classList.add('list-group-item-success');
+            }
+
+            setTimeout(() => {
+                currentQuestion++;
+                if (currentQuestion < gameData.length) {
+                    showQuestion();
+                } else {
+                    showResults();
+                }
+            }, 1500);
+        }
+
+        function showResults() {
+            document.querySelector('.card').style.display = 'none';
+            document.getElementById('result-container').style.display = 'block';
+            document.getElementById('final-score').textContent = score;
+            document.getElementById('final-total').textContent = gameData.length;
+        }
+
+        function restartGame() {
+            currentQuestion = 0;
+            score = 0;
+            document.querySelector('.card').style.display = 'block';
+            document.getElementById('result-container').style.display = 'none';
+            document.getElementById('score').textContent = '0';
+            showQuestion();
+        }
+
+        document.getElementById('restart-game').onclick = restartGame;
+        showQuestion();
+    </script>
+}
+
+@section Styles {
+    <style>
+        .max-width-800 {
+            max-width: 800px;
+        }
+        
+        .card-img-top {
+            height: 400px;
+            object-fit: cover;
+        }
+        
+        .list-group-item {
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .list-group-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .list-group-item-success {
+            background-color: #d4edda !important;
+            border-color: #c3e6cb !important;
+        }
+        
+        .list-group-item-danger {
+            background-color: #f8d7da !important;
+            border-color: #f5c6cb !important;
+        }
+        
+        .badge {
+            font-size: 1rem;
+        }
+    </style>
+} 

@@ -1,0 +1,159 @@
+@{
+    ViewData["Title"] = "Основы ухода за щенком";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <article class="article-full">
+                <h1 class="article-title">Основы ухода за щенком</h1>
+                
+                <div class="article-meta mb-4">
+                    <span><i class="far fa-clock"></i> 15 минут на чтение</span>
+                    <span class="ms-3"><i class="fas fa-tag"></i> Собаки</span>
+                </div>
+
+                <div class="article-content">
+                    <h2>Питание щенка</h2>
+                    <p>Правильное питание - основа здоровья и развития щенка. Вот основные рекомендации:</p>
+                    <ul>
+                        <li>Выбирайте корм, специально разработанный для щенков</li>
+                        <li>Соблюдайте режим кормления (3-4 раза в день для щенков до 6 месяцев)</li>
+                        <li>Следите за размером порций согласно рекомендациям на упаковке</li>
+                        <li>Обеспечьте постоянный доступ к чистой воде</li>
+                    </ul>
+
+                    <h2>Воспитание и дрессировка</h2>
+                    <p>Начало воспитания щенка - важный этап формирования его характера:</p>
+                    <ul>
+                        <li>Начните с базовых команд: "сидеть", "лежать", "ко мне"</li>
+                        <li>Используйте положительное подкрепление (лакомства, похвала)</li>
+                        <li>Будьте последовательны в требованиях</li>
+                        <li>Не применяйте физические наказания</li>
+                    </ul>
+
+                    <h2>Гигиена и уход</h2>
+                    <p>Регулярный уход за щенком включает:</p>
+                    <ul>
+                        <li>Еженедельное расчесывание шерсти</li>
+                        <li>Чистку ушей и глаз по мере необходимости</li>
+                        <li>Стрижку когтей каждые 2-3 недели</li>
+                        <li>Купание не чаще раза в месяц</li>
+                    </ul>
+
+                    <h2>Здоровье и вакцинация</h2>
+                    <p>Важные аспекты поддержания здоровья щенка:</p>
+                    <ul>
+                        <li>Своевременная вакцинация по графику ветеринара</li>
+                        <li>Регулярная обработка от паразитов</li>
+                        <li>Плановые осмотры у ветеринара</li>
+                        <li>Внимательное наблюдение за поведением и состоянием</li>
+                    </ul>
+
+                    <div class="article-tips mt-4">
+                        <h3>Полезные советы</h3>
+                        <ul>
+                            <li>Создайте безопасное пространство для щенка</li>
+                            <li>Приучайте к ошейнику и поводку постепенно</li>
+                            <li>Обеспечьте достаточную физическую активность</li>
+                            <li>Социализируйте щенка с другими собаками и людьми</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="article-footer mt-4">
+                    <a href="@Url.Action("Index", "Articles")" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left"></i> Вернуться к списку статей
+                    </a>
+                </div>
+            </article>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .article-full {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+        }
+
+        .article-title {
+            color: #2c3e50;
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .article-meta {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .article-content {
+            color: #495057;
+            line-height: 1.8;
+        }
+
+        .article-content h2 {
+            color: #2c3e50;
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem;
+            font-weight: 600;
+        }
+
+        .article-content h3 {
+            color: #2c3e50;
+            font-size: 1.3rem;
+            margin: 1.5rem 0 1rem;
+            font-weight: 600;
+        }
+
+        .article-content ul {
+            padding-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .article-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        .article-tips {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .article-footer {
+            border-top: 1px solid #dee2e6;
+            padding-top: 1.5rem;
+        }
+
+        .btn-outline-primary {
+            color: #3498db;
+            border-color: #3498db;
+            padding: 0.5rem 1.25rem;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: #3498db;
+            border-color: #3498db;
+            color: #fff;
+        }
+
+        @@media screen and (max-width: 768px) {
+            .article-full {
+                padding: 1.5rem;
+            }
+
+            .article-title {
+                font-size: 1.75rem;
+            }
+        }
+    </style>
+} 

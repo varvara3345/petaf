@@ -1,0 +1,206 @@
+@{
+    ViewData["Title"] = "Что делать, если нашел потерявшееся животное";
+}
+
+<div class="container mt-4">
+    <h1 class="text-center mb-4">Что делать, если нашел потерявшееся животное</h1>
+    
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="step-container">
+                        <div class="step active" id="step1">
+                            <h3 class="step-title">Шаг 1: Оценка ситуации</h3>
+                            <div class="step-content">
+                                <p>Прежде чем приближаться к животному, оцените ситуацию:</p>
+                                <ul class="list-group list-group-flush mb-4">
+                                    <li class="list-group-item">
+                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                        Животное выглядит дружелюбным?
+                                    </li>
+                                    <li class="list-group-item">
+                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                        Есть ли признаки агрессии?
+                                    </li>
+                                    <li class="list-group-item">
+                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                        Животное ранено или выглядит больным?
+                                    </li>
+                                </ul>
+                                <button class="btn btn-primary next-step" data-next="step2">Далее</button>
+                            </div>
+                        </div>
+
+                        <div class="step" id="step2" style="display: none;">
+                            <h3 class="step-title">Шаг 2: Безопасное приближение</h3>
+                            <div class="step-content">
+                                <p>Если животное выглядит дружелюбным:</p>
+                                <ul class="list-group list-group-flush mb-4">
+                                    <li class="list-group-item">
+                                        <i class="fas fa-info-circle text-info me-2"></i>
+                                        Приближайтесь медленно и спокойно
+                                    </li>
+                                    <li class="list-group-item">
+                                        <i class="fas fa-info-circle text-info me-2"></i>
+                                        Говорите тихим, спокойным голосом
+                                    </li>
+                                    <li class="list-group-item">
+                                        <i class="fas fa-info-circle text-info me-2"></i>
+                                        Не делайте резких движений
+                                    </li>
+                                </ul>
+                                <div class="d-flex justify-content-between">
+                                    <button class="btn btn-secondary prev-step" data-prev="step1">Назад</button>
+                                    <button class="btn btn-primary next-step" data-next="step3">Далее</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="step" id="step3" style="display: none;">
+                            <h3 class="step-title">Шаг 3: Проверка идентификации</h3>
+                            <div class="step-content">
+                                <p>Проверьте наличие идентификационных знаков:</p>
+                                <ul class="list-group list-group-flush mb-4">
+                                    <li class="list-group-item">
+                                        <i class="fas fa-tag text-primary me-2"></i>
+                                        Ошейник с адресником
+                                    </li>
+                                    <li class="list-group-item">
+                                        <i class="fas fa-tag text-primary me-2"></i>
+                                        Чип (можно проверить в ветеринарной клинике)
+                                    </li>
+                                    <li class="list-group-item">
+                                        <i class="fas fa-tag text-primary me-2"></i>
+                                        Клеймо (у некоторых породистых животных)
+                                    </li>
+                                </ul>
+                                <div class="d-flex justify-content-between">
+                                    <button class="btn btn-secondary prev-step" data-prev="step2">Назад</button>
+                                    <button class="btn btn-primary next-step" data-next="step4">Далее</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="step" id="step4" style="display: none;">
+                            <h3 class="step-title">Шаг 4: Временное пристанище</h3>
+                            <div class="step-content">
+                                <p>Если удалось поймать животное:</p>
+                                <ul class="list-group list-group-flush mb-4">
+                                    <li class="list-group-item">
+                                        <i class="fas fa-home text-success me-2"></i>
+                                        Обеспечьте безопасное место для временного содержания
+                                    </li>
+                                    <li class="list-group-item">
+                                        <i class="fas fa-utensils text-success me-2"></i>
+                                        Предоставьте воду и еду
+                                    </li>
+                                    <li class="list-group-item">
+                                        <i class="fas fa-bed text-success me-2"></i>
+                                        Создайте комфортные условия
+                                    </li>
+                                </ul>
+                                <div class="d-flex justify-content-between">
+                                    <button class="btn btn-secondary prev-step" data-prev="step3">Назад</button>
+                                    <button class="btn btn-primary next-step" data-next="step5">Далее</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="step" id="step5" style="display: none;">
+                            <h3 class="step-title">Шаг 5: Поиск хозяев</h3>
+                            <div class="step-content">
+                                <p>Разместите информацию о найденном животном:</p>
+                                <ul class="list-group list-group-flush mb-4">
+                                    <li class="list-group-item">
+                                        <i class="fas fa-map-marker-alt text-danger me-2"></i>
+                                        В социальных сетях и группах помощи животным
+                                    </li>
+                                    <li class="list-group-item">
+                                        <i class="fas fa-phone text-danger me-2"></i>
+                                        В местных ветеринарных клиниках
+                                    </li>
+                                    <li class="list-group-item">
+                                        <i class="fas fa-bullhorn text-danger me-2"></i>
+                                        На нашем сайте в разделе "Найдены животные"
+                                    </li>
+                                </ul>
+                                <div class="d-flex justify-content-between">
+                                    <button class="btn btn-secondary prev-step" data-prev="step4">Назад</button>
+                                    <button class="btn btn-success" id="finish-guide">Завершить</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <a href="@Url.Action("Index", "Games")" class="btn btn-outline-primary">Вернуться к играм</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.next-step').forEach(button => {
+            button.addEventListener('click', function() {
+                const currentStep = this.closest('.step');
+                const nextStepId = this.dataset.next;
+                currentStep.style.display = 'none';
+                document.getElementById(nextStepId).style.display = 'block';
+            });
+        });
+
+        document.querySelectorAll('.prev-step').forEach(button => {
+            button.addEventListener('click', function() {
+                const currentStep = this.closest('.step');
+                const prevStepId = this.dataset.prev;
+                currentStep.style.display = 'none';
+                document.getElementById(prevStepId).style.display = 'block';
+            });
+        });
+
+        document.getElementById('finish-guide').addEventListener('click', function() {
+            alert('Спасибо за внимание! Теперь вы знаете, как помочь потерявшемуся животному.');
+            window.location.href = '@Url.Action("Index", "Games")';
+        });
+    </script>
+}
+
+@section Styles {
+    <style>
+        .step-title {
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .step-content {
+            padding: 1rem 0;
+        }
+        
+        .list-group-item {
+            border-left: none;
+            border-right: none;
+            padding: 1rem;
+        }
+        
+        .list-group-item:first-child {
+            border-top: none;
+        }
+        
+        .list-group-item:last-child {
+            border-bottom: none;
+        }
+        
+        .btn {
+            padding: 0.5rem 1.5rem;
+        }
+        
+        .step {
+            transition: all 0.3s ease;
+        }
+    </style>
+} 

@@ -1,0 +1,190 @@
+@{
+    ViewData["Title"] = "Викторина по уходу за питомцами";
+}
+
+<div class="container mt-4">
+    <h1 class="text-center mb-4">Викторина по уходу за питомцами</h1>
+    <div id="quiz-container" class="max-width-800 mx-auto">
+        <div id="quiz-progress" class="mb-4">
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+            </div>
+            <small class="text-muted">Вопрос <span id="current-question">1</span> из <span id="total-questions">10</span></small>
+        </div>
+
+        <div id="quiz-content" class="card">
+            <div class="card-body">
+                <h5 id="question-text" class="card-title mb-4"></h5>
+                <div id="answers-container" class="list-group">
+                    <!-- Ответы будут добавлены через JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <div id="result-container" class="text-center mt-4" style="display: none;">
+            <h3>Результаты викторины</h3>
+            <p>Ваш результат: <span id="score">0</span> из <span id="total">10</span></p>
+            <button id="restart-quiz" class="btn btn-primary mt-3">Начать заново</button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const quizData = [
+            {
+                question: "Как часто нужно купать собаку?",
+                answers: [
+                    "Каждый день",
+                    "Раз в неделю",
+                    "Раз в 2-3 месяца",
+                    "Только при сильном загрязнении"
+                ],
+                correct: 3
+            },
+            {
+                question: "Какой корм лучше всего подходит для котят?",
+                answers: [
+                    "Взрослый сухой корм",
+                    "Специальный корм для котят",
+                    "Только влажный корм",
+                    "Любой корм, который ест мама-кошка"
+                ],
+                correct: 1
+            },
+            {
+                question: "Как часто нужно чистить зубы собаке?",
+                answers: [
+                    "Раз в неделю",
+                    "Каждый день",
+                    "Раз в месяц",
+                    "Собакам не нужно чистить зубы"
+                ],
+                correct: 1
+            },
+            {
+                question: "Что делать, если у кошки появились блохи?",
+                answers: [
+                    "Использовать специальные капли или ошейник от блох",
+                    "Искупать в обычной воде",
+                    "Ничего не делать, они сами пройдут",
+                    "Дать человеческие лекарства от паразитов"
+                ],
+                correct: 0
+            },
+            {
+                question: "Как часто нужно выгуливать взрослую собаку?",
+                answers: [
+                    "Раз в день",
+                    "2-3 раза в день",
+                    "Только по выходным",
+                    "Когда собака сама попросит"
+                ],
+                correct: 1
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        function showQuestion() {
+            const question = quizData[currentQuestion];
+            document.getElementById('question-text').textContent = question.question;
+            
+            const answersContainer = document.getElementById('answers-container');
+            answersContainer.innerHTML = '';
+            
+            question.answers.forEach((answer, index) => {
+                const button = document.createElement('button');
+                button.className = 'list-group-item list-group-item-action';
+                button.textContent = answer;
+                button.onclick = () => checkAnswer(index);
+                answersContainer.appendChild(button);
+            });
+
+            document.getElementById('current-question').textContent = currentQuestion + 1;
+            document.getElementById('total-questions').textContent = quizData.length;
+            document.querySelector('.progress-bar').style.width = 
+                ((currentQuestion + 1) / quizData.length * 100) + '%';
+        }
+
+        function checkAnswer(selectedIndex) {
+            const question = quizData[currentQuestion];
+            const buttons = document.querySelectorAll('#answers-container button');
+            
+            buttons.forEach(button => button.disabled = true);
+            
+            if (selectedIndex === question.correct) {
+                buttons[selectedIndex].classList.add('list-group-item-success');
+                score++;
+            } else {
+                buttons[selectedIndex].classList.add('list-group-item-danger');
+                buttons[question.correct].classList.add('list-group-item-success');
+            }
+
+            setTimeout(() => {
+                currentQuestion++;
+                if (currentQuestion < quizData.length) {
+                    showQuestion();
+                } else {
+                    showResults();
+                }
+            }, 1000);
+        }
+
+        function showResults() {
+            document.getElementById('quiz-content').style.display = 'none';
+            document.getElementById('result-container').style.display = 'block';
+            document.getElementById('score').textContent = score;
+            document.getElementById('total').textContent = quizData.length;
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            document.getElementById('quiz-content').style.display = 'block';
+            document.getElementById('result-container').style.display = 'none';
+            showQuestion();
+        }
+
+        document.getElementById('restart-quiz').onclick = restartQuiz;
+        showQuestion();
+    </script>
+}
+
+@section Styles {
+    <style>
+        .max-width-800 {
+            max-width: 800px;
+        }
+        
+        .list-group-item {
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .list-group-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .list-group-item-success {
+            background-color: #d4edda !important;
+            border-color: #c3e6cb !important;
+        }
+        
+        .list-group-item-danger {
+            background-color: #f8d7da !important;
+            border-color: #f5c6cb !important;
+        }
+        
+        .progress {
+            height: 10px;
+            border-radius: 5px;
+        }
+        
+        .progress-bar {
+            background-color: #3498db;
+            transition: width 0.3s ease;
+        }
+    </style>
+} 

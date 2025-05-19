@@ -1,0 +1,160 @@
+@{
+    ViewData["Title"] = "Здоровье питомца: профилактика и уход";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <article class="article-full">
+                <h1 class="article-title">Здоровье питомца: профилактика и уход</h1>
+                
+                <div class="article-meta mb-4">
+                    <span><i class="far fa-clock"></i> 12 минут на чтение</span>
+                    <span class="ms-3"><i class="fas fa-tag"></i> Здоровье</span>
+                </div>
+
+                <div class="article-content">
+                    <h2>Регулярные осмотры у ветеринара</h2>
+                    <p>Профилактические осмотры - залог здоровья вашего питомца:</p>
+                    <ul>
+                        <li>Ежегодный осмотр для взрослых животных</li>
+                        <li>Более частые осмотры для пожилых питомцев</li>
+                        <li>Плановые прививки по графику</li>
+                        <li>Профилактика паразитов</li>
+                    </ul>
+
+                    <h2>Признаки здоровья</h2>
+                    <p>На что обращать внимание при ежедневном уходе:</p>
+                    <ul>
+                        <li>Активность и аппетит</li>
+                        <li>Состояние шерсти и кожи</li>
+                        <li>Чистота глаз и ушей</li>
+                        <li>Регулярность стула и мочеиспускания</li>
+                    </ul>
+
+                    <h2>Тревожные симптомы</h2>
+                    <p>Когда нужно срочно обратиться к ветеринару:</p>
+                    <ul>
+                        <li>Отказ от еды более 24 часов</li>
+                        <li>Рвота или диарея</li>
+                        <li>Затрудненное дыхание</li>
+                        <li>Изменение поведения</li>
+                        <li>Повышение температуры</li>
+                    </ul>
+
+                    <h2>Профилактические меры</h2>
+                    <p>Основные меры профилактики:</p>
+                    <ul>
+                        <li>Сбалансированное питание</li>
+                        <li>Регулярная физическая активность</li>
+                        <li>Гигиенический уход</li>
+                        <li>Своевременная вакцинация</li>
+                    </ul>
+
+                    <div class="article-tips mt-4">
+                        <h3>Полезные советы</h3>
+                        <ul>
+                            <li>Ведите календарь прививок и обработок</li>
+                            <li>Храните медицинскую карту питомца</li>
+                            <li>Имейте контакты ближайшей ветеринарной клиники</li>
+                            <li>Следите за изменениями в поведении</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="article-footer mt-4">
+                    <a href="@Url.Action("Index", "Articles")" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left"></i> Вернуться к списку статей
+                    </a>
+                </div>
+            </article>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .article-full {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+        }
+
+        .article-title {
+            color: #2c3e50;
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .article-meta {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .article-content {
+            color: #495057;
+            line-height: 1.8;
+        }
+
+        .article-content h2 {
+            color: #2c3e50;
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem;
+            font-weight: 600;
+        }
+
+        .article-content h3 {
+            color: #2c3e50;
+            font-size: 1.3rem;
+            margin: 1.5rem 0 1rem;
+            font-weight: 600;
+        }
+
+        .article-content ul {
+            padding-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .article-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        .article-tips {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .article-footer {
+            border-top: 1px solid #dee2e6;
+            padding-top: 1.5rem;
+        }
+
+        .btn-outline-primary {
+            color: #3498db;
+            border-color: #3498db;
+            padding: 0.5rem 1.25rem;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: #3498db;
+            border-color: #3498db;
+            color: #fff;
+        }
+
+        @@media screen and (max-width: 768px) {
+            .article-full {
+                padding: 1.5rem;
+            }
+
+            .article-title {
+                font-size: 1.75rem;
+            }
+        }
+    </style>
+} 

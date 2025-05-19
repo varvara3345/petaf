@@ -3,29 +3,24 @@ using PetaFF.Models;
 
 namespace PetaFF.Controllers
 {
-    public class ArticlesController : Controller
+    public class GamesController : Controller
     {
         public IActionResult Index()
         {
             return View();
         }
 
-        public IActionResult PuppyCare()
+        public IActionResult PetCareQuiz()
         {
             return View();
         }
 
-        public IActionResult CatLitterTraining()
+        public IActionResult LostPetGuide()
         {
             return View();
         }
 
-        public IActionResult PetHealth()
-        {
-            return View();
-        }
-
-        public IActionResult PetHomeSetup()
+        public IActionResult PetFacts()
         {
             return View();
         }

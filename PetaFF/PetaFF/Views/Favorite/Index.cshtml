@@ -1,4 +1,5 @@
 @model IEnumerable<PetaFF.Models.Favorite>
+@using PetaFF.Extensions
 
 @{
     ViewData["Title"] = "Избранные объявления";
@@ -26,7 +27,10 @@
                             <p class="card-text">
                                 <small class="text-muted">
                                     Район: @favorite.PetAd.District<br>
-                                    Статус: @favorite.PetAd.Status<br>
+                                    Статус: 
+                                    <span class="badge bg-danger">
+                                        В поиске
+                                    </span><br>
                                     Автор: @favorite.PetAd.User.Username<br>
                                     Дата добавления в избранное: @favorite.CreatedAt.ToString("dd.MM.yyyy")
                                 </small>
@@ -73,6 +77,7 @@
                 favs = JSON.parse(localStorage.getItem('fakeFavorites') || '[]');
             } catch {}
             if (favs.length === 0) return;
+
             favs.forEach(function(ad) {
                 const col = document.createElement('div');
                 col.className = 'col-md-6 mb-4';
@@ -85,7 +90,10 @@
                             <p class="card-text">
                                 <small class="text-muted">
                                     Район: ${ad.District || '-'}<br>
-                                    Статус: ${ad.Status || '-'}<br>
+                                    Статус: 
+                                    <span class="badge bg-danger">
+                                        В поиске
+                                    </span><br>
                                     Автор: ${ad.User?.Username || '-'}<br>
                                     Дата: ${(ad.DateLost ? new Date(ad.DateLost).toLocaleDateString() : '-')}
                                 </small>
@@ -101,16 +109,22 @@
                 row.appendChild(col);
             });
         }
+
+        // Инициализация при загрузке страницы
         document.addEventListener('DOMContentLoaded', function() {
             renderFakeFavorites();
-            document.getElementById('fake-favorites-row').addEventListener('click', function(e) {
-                if (e.target.closest('.remove-fake-favorite')) {
-                    const btn = e.target.closest('.remove-fake-favorite');
+            
+            // Обработчик удаления из избранного
+            document.querySelectorAll('.remove-fake-favorite').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    const name = btn.getAttribute('data-name');
+                    const type = btn.getAttribute('data-type');
+                    const date = btn.getAttribute('data-date');
                     let favs = JSON.parse(localStorage.getItem('fakeFavorites') || '[]');
-                    favs = favs.filter(f => !(f.Name === btn.dataset.name && f.Type === btn.dataset.type && f.DateLost === btn.dataset.date));
+                    favs = favs.filter(f => !(f.Name === name && f.Type === type && f.DateLost === date));
                     localStorage.setItem('fakeFavorites', JSON.stringify(favs));
                     renderFakeFavorites();
-                }
+                });
             });
         });
     </script>

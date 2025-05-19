@@ -1,0 +1,159 @@
+@{
+    ViewData["Title"] = "Как приучить кошку к лотку";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <article class="article-full">
+                <h1 class="article-title">Как приучить кошку к лотку</h1>
+                
+                <div class="article-meta mb-4">
+                    <span><i class="far fa-clock"></i> 10 минут на чтение</span>
+                    <span class="ms-3"><i class="fas fa-tag"></i> Кошки</span>
+                </div>
+
+                <div class="article-content">
+                    <h2>Выбор лотка и наполнителя</h2>
+                    <p>Правильный выбор лотка и наполнителя - первый шаг к успеху:</p>
+                    <ul>
+                        <li>Выбирайте лоток с высокими бортиками для котят</li>
+                        <li>Размер лотка должен быть в 1.5 раза больше длины кошки</li>
+                        <li>Начинайте с древесного или минерального наполнителя</li>
+                        <li>Избегайте ароматизированных наполнителей</li>
+                    </ul>
+
+                    <h2>Выбор места для лотка</h2>
+                    <p>Место расположения лотка играет важную роль:</p>
+                    <ul>
+                        <li>Выберите тихое, спокойное место</li>
+                        <li>Избегайте мест рядом с едой и водой</li>
+                        <li>Обеспечьте легкий доступ к лотку</li>
+                        <li>Не ставьте лоток в проходных местах</li>
+                    </ul>
+
+                    <h2>Процесс приучения</h2>
+                    <p>Пошаговая инструкция по приучению:</p>
+                    <ul>
+                        <li>Покажите кошке лоток сразу после появления в доме</li>
+                        <li>Сажайте в лоток после еды и сна</li>
+                        <li>Хвалите и поощряйте за правильное использование</li>
+                        <li>Не наказывайте за ошибки</li>
+                    </ul>
+
+                    <h2>Решение проблем</h2>
+                    <p>Что делать, если возникают сложности:</p>
+                    <ul>
+                        <li>Регулярно убирайте лоток</li>
+                        <li>Попробуйте другой тип наполнителя</li>
+                        <li>Проверьте здоровье кошки у ветеринара</li>
+                        <li>Убедитесь, что лоток не вызывает стресс</li>
+                    </ul>
+
+                    <div class="article-tips mt-4">
+                        <h3>Важные советы</h3>
+                        <ul>
+                            <li>Будьте терпеливы - процесс может занять время</li>
+                            <li>Поддерживайте чистоту лотка</li>
+                            <li>Используйте феромоны для снижения стресса</li>
+                            <li>При необходимости используйте несколько лотков</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="article-footer mt-4">
+                    <a href="@Url.Action("Index", "Articles")" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left"></i> Вернуться к списку статей
+                    </a>
+                </div>
+            </article>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .article-full {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+        }
+
+        .article-title {
+            color: #2c3e50;
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .article-meta {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .article-content {
+            color: #495057;
+            line-height: 1.8;
+        }
+
+        .article-content h2 {
+            color: #2c3e50;
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem;
+            font-weight: 600;
+        }
+
+        .article-content h3 {
+            color: #2c3e50;
+            font-size: 1.3rem;
+            margin: 1.5rem 0 1rem;
+            font-weight: 600;
+        }
+
+        .article-content ul {
+            padding-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .article-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        .article-tips {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .article-footer {
+            border-top: 1px solid #dee2e6;
+            padding-top: 1.5rem;
+        }
+
+        .btn-outline-primary {
+            color: #3498db;
+            border-color: #3498db;
+            padding: 0.5rem 1.25rem;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: #3498db;
+            border-color: #3498db;
+            color: #fff;
+        }
+
+        @@media screen and (max-width: 768px) {
+            .article-full {
+                padding: 1.5rem;
+            }
+
+            .article-title {
+                font-size: 1.75rem;
+            }
+        }
+    </style>
+} 
